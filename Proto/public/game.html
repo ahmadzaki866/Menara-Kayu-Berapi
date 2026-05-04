@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Game</title>
+<style>
+body{margin:0;background:#020617;color:white}
+.player{position:absolute;width:40px;height:40px;background:orange}
+.platform{position:absolute;background:#334155}
+.quiz{background:red}
+#quizBox{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;background:white;color:black;padding:10px}
+</style>
+</head>
+<body>
+
+<div id="game"></div>
+<div id="quizBox"><h3 id="question"></h3><div id="answers"></div></div>
+<div id="timer">10</div>
+<ul id="scoreList"></ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket=io();
+const game=document.getElementById("game");
+
+let myId=null;
+let players={};
+
+let platforms=JSON.parse(localStorage.getItem("map"))||[];
+
+platforms.forEach(p=>{
+ let el=document.createElement("div");
+ el.className="platform "+(p.type==="quiz"?"quiz":"");
+ el.style.left=p.x+"px";
+ el.style.top=p.y+"px";
+ el.style.width=p.w+"px";
+ el.style.height=p.h+"px";
+ game.appendChild(el);
+});
+
+function createPlayer(id,name){
+ let el=document.createElement("div");
+ el.className="player";
+ game.appendChild(el);
+ players[id]={x:100,y:100,vx:0,vy:0,el};
+}
+
+socket.on("connect",()=>{
+ myId=socket.id;
+ let name=localStorage.getItem("name")||"Player";
+ createPlayer(myId,name);
+ socket.emit("joinGame",{name});
+});
+
+socket.on("newPlayer",p=>createPlayer(p.id,p.name));
+
+socket.on("playerMove",d=>{
+ if(players[d.id]){
+  players[d.id].x=d.x;
+  players[d.id].y=d.y;
+  players[d.id].el.style.left=d.x+"px";
+  players[d.id].el.style.top=d.y+"px";
+ }
+});
+
+let keys={};
+document.onkeydown=e=>keys[e.key]=true;
+document.onkeyup=e=>keys[e.key]=false;
+
+function loop(){
+ let me=players[myId];
+ if(me){
+  if(keys["ArrowRight"]) me.x+=3;
+  if(keys["ArrowLeft"]) me.x-=3;
+
+  me.vy+=0.5;
+  me.y+=me.vy;
+
+  platforms.forEach(pl=>{
+    if(me.x<pl.x+pl.w && me.x+40>pl.x && me.y<pl.y+pl.h && me.y+40>pl.y){
+      me.y=pl.y-40;
+      me.vy=0;
+      if(pl.type==="quiz") socket.emit("triggerQuiz");
+    }
+  });
+
+  me.el.style.left=me.x+"px";
+  me.el.style.top=me.y+"px";
+
+  socket.emit("move",{x:me.x,y:me.y});
+ }
+ requestAnimationFrame(loop);
+}
+loop();
+
+socket.on("newQuestion",q=>{
+ let box=document.getElementById("quizBox");
+ let qText=document.getElementById("question");
+ let ans=document.getElementById("answers");
+
+ qText.innerText=q.question;
+ ans.innerHTML="";
+
+ q.options.forEach((o,i)=>{
+  let b=document.createElement("button");
+  b.innerText=o;
+  b.onclick=()=>{
+   socket.emit("submitAnswer",{answer:i});
+   box.style.display="none";
+  };
+  ans.appendChild(b);
+ });
+
+ box.style.display="block";
+});
+
+socket.on("timerUpdate",t=>{
+ document.getElementById("timer").innerText=t;
+});
+
+socket.on("updateLeaderboard",ps=>{
+ let list=document.getElementById("scoreList");
+ list.innerHTML="";
+ ps.sort((a,b)=>b.score-a.score);
+ ps.forEach(p=>{
+  let li=document.createElement("li");
+  li.innerText=p.name+" "+p.score;
+  list.appendChild(li);
+ });
+});
+
+socket.on("gameOver",d=>{
+ alert(d.winner+" menang!");
+});
+</script>
+
+</body>
+</html>

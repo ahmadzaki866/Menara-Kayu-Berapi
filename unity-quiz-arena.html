@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity Quiz Arena</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E84040;
+    --gold: #F5C518;
+    --blue: #1E90FF;
+    --green: #2ECC71;
+    --dark: #0D0D1A;
+    --dark2: #151528;
+    --dark3: #1E1E38;
+    --text: #E8E8F0;
+    --muted: #8888AA;
+    --panel: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: var(--dark); color: var(--text); font-family: 'Nunito', sans-serif; overflow: hidden; }
+
+  /* ─── SCREENS ─── */
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity .4s, transform .4s; }
+  .screen.hidden { opacity: 0; pointer-events: none; transform: scale(.97); }
+
+  /* ─── STARS BG ─── */
+  #stars { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .star { position: absolute; border-radius: 50%; background: #fff; animation: twinkle var(--d) ease-in-out infinite; opacity: 0; }
+  @keyframes twinkle { 0%,100%{opacity:0} 50%{opacity:var(--op)} }
+
+  /* ─── WELCOME SCREEN ─── */
+  #welcome { z-index: 10; gap: 0; }
+  .logo-wrap { text-align: center; margin-bottom: 32px; }
+  .logo-title {
+    font-family: 'Oxanium', sans-serif;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    background: linear-gradient(135deg, #F5C518 0%, #E84040 50%, #1E90FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(245,197,24,0.3));
+  }
+  .logo-sub { font-size: 14px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; font-family: 'Oxanium', sans-serif; }
+
+  .welcome-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 40px;
+    width: min(420px, 92vw);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .form-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; font-family: 'Oxanium', sans-serif; }
+  .form-input {
+    width: 100%;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus { border-color: var(--gold); }
+
+  .avatar-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .avatar-opt {
+    width: 52px; height: 52px; border-radius: 12px;
+    border: 2px solid transparent;
+    background: var(--dark3);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    transition: border-color .2s, transform .15s;
+  }
+  .avatar-opt:hover { transform: scale(1.1); }
+  .avatar-opt.sel { border-color: var(--gold); background: rgba(245,197,24,0.15); }
+
+  .mode-select { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mode-opt {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--dark3);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all .2s;
+    text-align: center;
+  }
+  .mode-opt:hover { border-color: var(--blue); color: var(--text); }
+  .mode-opt.sel { border-color: var(--blue); background: rgba(30,144,255,0.15); color: var(--text); }
+  .mode-opt .mode-emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+  .mode-opt .mode-name { font-weight: 700; font-size: 12px; }
+  .mode-opt .mode-hint { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .btn-play {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), var(--red));
+    color: #0D0D1A;
+    font-size: 16px;
+    font-weight: 800;
+    font-family: 'Oxanium', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 20px rgba(245,197,24,0.3);
+  }
+  .btn-play:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,197,24,0.4); }
+  .btn-play:active { transform: translateY(0); }
+
+  /* ─── GAME SCREEN ─── */
+  #game-screen { z-index: 5; flex-direction: column; padding: 0; }
+  #game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+
+  /* ─── HUD ─── */
+  #hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: linear-gradient(to bottom, rgba(13,13,26,0.95), transparent);
+    z-index: 20;
+    gap: 12px;
+  }
+  .hud-left, .hud-right { display: flex; align-items: center; gap: 14px; }
+  .hud-player { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; }
+  .hud-avatar { font-size: 20px; }
+  .hud-name { font-size: 13px; font-weight: 700; }
+  .hud-score-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 6px 14px; text-align: center; }
+  .hud-score-label { font-size: 10px; color: var(--muted); font-family: 'Oxanium', sans-serif; letter-spacing: 1px; }
+  .hud-score-val { font-size: 20px; font-weight: 800; color: var(--gold); font-family: 'Oxanium', sans-serif; }
+  .hud-timer { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 6px 14px; text-align: center; }
+  .hud-timer-val { font-size: 20px; font-weight: 800; color: var(--text); font-family: 'Oxanium', sans-serif; }
+  .hud-timer-val.urgent { color: var(--red); animation: pulse-red .5s ease-in-out infinite; }
+  @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:.6} }
+  .hud-lives { display: flex; gap: 4px; font-size: 18px; }
+
+  /* ─── QUIZ OVERLAY ─── */
+  #quiz-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13,13,26,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+  #quiz-overlay.show { opacity: 1; pointer-events: all; }
+  .quiz-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px;
+    width: min(520px, 94vw);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+    animation: slideUp .3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .quiz-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(245,197,24,0.15);
+    border: 1px solid rgba(245,197,24,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--gold);
+    font-family: 'Oxanium', sans-serif;
+    margin-bottom: 16px;
+  }
+  .quiz-q {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+  .quiz-timer-bar { height: 4px; background: var(--dark3); border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+  .quiz-timer-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--red)); border-radius: 2px; transition: width .1s linear; }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quiz-opt {
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--dark3);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    transition: all .15s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quiz-opt:hover { border-color: var(--blue); background: rgba(30,144,255,0.12); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(46,204,113,0.2); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(232,64,64,0.2); color: var(--red); }
+  .quiz-opt-label {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: var(--dark2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+    font-family: 'Oxanium', sans-serif;
+  }
+  .quiz-result {
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 16px;
+    display: none;
+  }
+  .quiz-result.show { display: block; }
+  .quiz-result.correct-res { background: rgba(46,204,113,0.15); color: var(--green); }
+  .quiz-result.wrong-res { background: rgba(232,64,64,0.15); color: var(--red); }
+
+  /* ─── SCORE POPUP ─── */
+  .score-popup {
+    position: absolute;
+    font-family: 'Oxanium', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold);
+    pointer-events: none;
+    z-index: 40;
+    animation: floatUp .9s forwards;
+    text-shadow: 0 0 10px rgba(245,197,24,0.5);
+  }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-70px)} }
+
+  /* ─── LEADERBOARD ─── */
+  #leaderboard-screen { z-index: 15; }
+  .lb-card {
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px;
+    width: min(460px, 94vw);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .lb-title { font-family: 'Oxanium', sans-serif; font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+  .lb-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 24px; }
+  .lb-entries { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .lb-entry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    animation: slideIn .4s both;
+  }
+  .lb-entry:nth-child(1) { border-color: rgba(245,197,24,0.5); background: rgba(245,197,24,0.08); }
+  .lb-entry:nth-child(2) { border-color: rgba(180,180,200,0.4); }
+  .lb-entry:nth-child(3) { border-color: rgba(205,127,50,0.4); }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:none} }
+  .lb-rank { font-family: 'Oxanium', sans-serif; font-size: 16px; font-weight: 800; min-width: 28px; text-align: center; }
+  .lb-rank.gold { color: var(--gold); }
+  .lb-rank.silver { color: #C0C0D0; }
+  .lb-rank.bronze { color: #CD7F32; }
+  .lb-avatar-icon { font-size: 24px; }
+  .lb-info { flex: 1; }
+  .lb-pname { font-weight: 700; font-size: 14px; }
+  .lb-detail { font-size: 12px; color: var(--muted); }
+  .lb-pts { font-family: 'Oxanium', sans-serif; font-size: 20px; font-weight: 800; color: var(--gold); }
+  .btn-again {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--blue), #7B2FFF);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'Oxanium', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 20px rgba(30,144,255,0.3);
+  }
+  .btn-again:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(30,144,255,0.4); }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 50;
+    opacity: 0;
+    transition: all .3s;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ─── CONTROLS HINT ─── */
+  #controls-hint {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+  }
+  .ctrl-key {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Oxanium', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .key-badge {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  /* ─── COUNTDOWN ─── */
+  #countdown {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 25;
+    pointer-events: none;
+  }
+  #countdown-num {
+    font-family: 'Oxanium', sans-serif;
+    font-size: 120px;
+    font-weight: 800;
+    color: var(--gold);
+    text-shadow: 0 0 60px rgba(245,197,24,0.5);
+    display: none;
+    animation: countPop .8s ease;
+  }
+  @keyframes countPop { 0%{transform:scale(1.5);opacity:0} 30%{opacity:1;transform:scale(1)} 80%{opacity:1} 100%{opacity:0} }
+
+  /* ─── PAUSE ─── */
+  #pause-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13,13,26,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 35;
+    backdrop-filter: blur(4px);
+    display: none;
+  }
+  #pause-overlay.show { display: flex; }
+  .pause-text { font-family: 'Oxanium', sans-serif; font-size: 48px; font-weight: 800; text-align: center; }
+  .pause-sub { font-size: 16px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+  /* ─── MOBILE CONTROLS ─── */
+  #mobile-ctrl {
+    position: absolute;
+    bottom: 20px;
+    left: 0; right: 0;
+    display: none;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 20;
+  }
+  @media (max-width: 600px) or (pointer: coarse) { #mobile-ctrl { display: flex; } }
+  .mob-btn {
+    width: 60px; height: 60px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .1s;
+  }
+  .mob-btn:active { background: rgba(245,197,24,0.3); }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- ═══ WELCOME SCREEN ═══ -->
+<div class="screen" id="welcome">
+  <div class="logo-wrap">
+    <div class="logo-title">Unity Quiz Arena</div>
+    <div class="logo-sub">🇮🇩 &nbsp; Edukasi Pancasila &nbsp; 🇮🇩</div>
+  </div>
+  <div class="welcome-card">
+    <div>
+      <div class="form-label">Nama Kamu</div>
+      <input class="form-input" id="name-input" placeholder="Masukkan nama alias..." maxlength="18" />
+    </div>
+    <div>
+      <div class="form-label">Pilih Avatar</div>
+      <div class="avatar-row" id="avatar-row"></div>
+    </div>
+    <div>
+      <div class="form-label">Mode Permainan</div>
+      <div class="mode-select" id="mode-select"></div>
+    </div>
+    <button class="btn-play" id="btn-play">⚡ MULAI MAIN</button>
+  </div>
+</div>
+
+<!-- ═══ GAME SCREEN ═══ -->
+<div class="screen hidden" id="game-screen">
+  <canvas id="game-canvas"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-left">
+      <div class="hud-player">
+        <div class="hud-avatar" id="hud-avatar">🦸</div>
+        <div class="hud-name" id="hud-name">Player</div>
+      </div>
+      <div class="hud-lives" id="hud-lives">❤️❤️❤️</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="hud-score-box">
+        <div class="hud-score-label">Skor</div>
+        <div class="hud-score-val" id="hud-score">0</div>
+      </div>
+      <div class="hud-timer">
+        <div class="hud-score-label">Waktu</div>
+        <div class="hud-timer-val" id="hud-timer">60</div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-score-box">
+        <div class="hud-score-label">Level</div>
+        <div class="hud-score-val" id="hud-level">1</div>
+      </div>
+      <div class="hud-score-box">
+        <div class="hud-score-label">Pertanyaan</div>
+        <div class="hud-score-val" id="hud-qcount">0/10</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls hint -->
+  <div id="controls-hint">
+    <div class="ctrl-key"><span class="key-badge">← →</span> Jalan</div>
+    <div class="ctrl-key"><span class="key-badge">↑</span><span class="key-badge">SPACE</span> Lompat</div>
+    <div class="ctrl-key"><span class="key-badge">ESC</span> Pause</div>
+  </div>
+
+  <!-- Mobile controls -->
+  <div id="mobile-ctrl">
+    <div style="display:flex;gap:10px">
+      <div class="mob-btn" id="mob-left">◀</div>
+      <div class="mob-btn" id="mob-right">▶</div>
+    </div>
+    <div class="mob-btn" id="mob-jump">▲</div>
+  </div>
+
+  <!-- Countdown -->
+  <div id="countdown"><div id="countdown-num">3</div></div>
+
+  <!-- Quiz Overlay -->
+  <div id="quiz-overlay">
+    <div class="quiz-card">
+      <div class="quiz-tag">🧠 Pertanyaan Pancasila</div>
+      <div class="quiz-q" id="quiz-q">Pertanyaan muncul di sini...</div>
+      <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="quiz-bar"></div></div>
+      <div class="quiz-options" id="quiz-opts"></div>
+      <div class="quiz-result" id="quiz-result"></div>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="pause-overlay">
+    <div>
+      <div class="pause-text">⏸ JEDA</div>
+      <div class="pause-sub">Tekan ESC untuk lanjut</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEADERBOARD SCREEN ═══ -->
+<div class="screen hidden" id="leaderboard-screen">
+  <div class="lb-card">
+    <div class="lb-title">🏆 Hasil Akhir</div>
+    <div class="lb-sub" id="lb-sub">Game selesai! Lihat posisimu.</div>
+    <div class="lb-entries" id="lb-entries"></div>
+    <button class="btn-again" id="btn-again">🔄 Main Lagi</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════
+const AVATARS = ['🦸','🧙','🥷','🧝','🦊','🐉','🌟','🔥'];
+const MODES = [
+  { id:'race', emoji:'⚔️', name:'Quiz Race', hint:'Balapan + kuis' },
+  { id:'adventure', emoji:'🏁', name:'Adventure', hint:'Checkpoint kuis' },
+  { id:'laststand', emoji:'👑', name:'Last Stand', hint:'Eliminasi' },
+  { id:'speed', emoji:'⚡', name:'Speed Rush', hint:'Cepat & tepat' },
+];
+
+const QUESTIONS = [
+  { q: "Pancasila sebagai dasar negara disahkan pada tanggal...", opts: ["17 Agustus 1945","18 Agustus 1945","1 Juni 1945","22 Juni 1945"], ans: 1 },
+  { q: "Sila ke-3 Pancasila berbunyi...", opts: ["Kemanusiaan yang adil dan beradab","Ketuhanan yang Maha Esa","Persatuan Indonesia","Kerakyatan yang dipimpin oleh hikmat"], ans: 2 },
+  { q: "Lambang sila ke-1 Pancasila adalah...", opts: ["Kepala Banteng","Bintang","Pohon Beringin","Padi dan Kapas"], ans: 1 },
+  { q: "Semboyan nasional Indonesia adalah...", opts: ["Bhineka Tunggal Ika","Garuda Pancasila","Merdeka atau Mati","Satu Nusa Satu Bangsa"], ans: 0 },
+  { q: "Sila ke-5 Pancasila dilambangkan oleh...", opts: ["Bintang","Rantai","Pohon Beringin","Padi dan Kapas"], ans: 3 },
+  { q: "Nilai gotong royong mencerminkan sila ke...", opts: ["Sila 2","Sila 3","Sila 4","Sila 5"], ans: 1 },
+  { q: "Perumus Pancasila yang dikenal sebagai Bapak Bangsa adalah...", opts: ["Hatta","Soekarno","Soepomo","Yamin"], ans: 1 },
+  { q: "Kepala Banteng adalah lambang sila ke...", opts: ["Sila 3","Sila 4","Sila 5","Sila 2"], ans: 1 },
+  { q: "Musyawarah untuk mufakat merupakan pelaksanaan sila ke...", opts: ["Sila 2","Sila 3","Sila 4","Sila 5"], ans: 2 },
+  { q: "UUD 1945 pasal berapa yang menyebutkan Pancasila?", opts: ["Pembukaan","Pasal 1","Pasal 29","Pasal 33"], ans: 0 },
+  { q: "Sikap menghormati perbedaan agama mencerminkan sila ke...", opts: ["Sila 1","Sila 2","Sila 3","Sila 4"], ans: 0 },
+  { q: "Rantai dalam lambang Pancasila melambangkan sila ke...", opts: ["Sila 1","Sila 2","Sila 3","Sila 5"], ans: 1 },
+  { q: "Tanggal 1 Juni diperingati sebagai...", opts: ["HUT RI","Hari Pancasila","Hari Pahlawan","Hari Pendidikan"], ans: 1 },
+  { q: "Pohon Beringin dalam Pancasila melambangkan...", opts: ["Persatuan & perlindungan","Keadilan","Kemanusiaan","Ketuhanan"], ans: 0 },
+  { q: "Yang bukan nilai Pancasila adalah...", opts: ["Keadilan","Persatuan","Individualisme","Ketuhanan"], ans: 2 },
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let playerName = 'Pemain', playerAvatar = '🦸', selectedMode = 'race';
+let score = 0, lives = 3, timeLeft = 60, level = 1;
+let questionsAnswered = 0, questionsCorrect = 0;
+let gameRunning = false, paused = false;
+let keys = {}, quizActive = false;
+let shuffledQ = [], currentQIdx = 0;
+let quizBarTimer = null, quizTimeLeft = 0;
+let gameTimer = null;
+
+// ══════════════════════════════════════════════
+//  CANVAS & WORLD
+// ══════════════════════════════════════════════
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', () => { resize(); if (gameRunning) buildWorld(); });
+
+// ── WORLD CONFIG ──
+const TILE = 40;
+const GRAVITY = 0.55;
+const JUMP_FORCE = -13;
+const SPEED = 4.5;
+
+let camera = { x: 0 };
+let worldWidth = 0;
+
+let platforms = [];
+let checkpoints = [];
+let coins = [];
+let enemies = [];
+let particles = [];
+let bgLayers = [];
+
+let player;
+
+function createPlayer() {
+  return {
+    x: 100, y: 300,
+    w: 36, h: 42,
+    vx: 0, vy: 0,
+    grounded: false,
+    facingRight: true,
+    jumping: false,
+    jumpPressed: false,
+    blinkTimer: 0,
+    hitTimer: 0,
+    dead: false,
+    trail: [],
+  };
+}
+
+function buildWorld() {
+  const levels_data = [
+    { name: 'Sekolah 🏫', sky: ['#0D1B4B','#1A2E6E'], ground: '#2A7A3B', accent: '#F5C518' },
+    { name: 'Desa 🏡',    sky: ['#1A3A5C','#2E5F8A'], ground: '#3E9E50', accent: '#FF6B35' },
+    { name: 'Kota 🏙️',   sky: ['#0A0A1E','#101030'], ground: '#555588', accent: '#1E90FF' },
+  ];
+  const ld = levels_data[(level - 1) % levels_data.length];
+
+  worldWidth = W * 6;
+  platforms = [];
+  checkpoints = [];
+  coins = [];
+  enemies = [];
+  bgLayers = [ld.sky[0], ld.sky[1], ld.ground];
+
+  // Ground
+  const groundY = H - 80;
+  platforms.push({ x: 0, y: groundY, w: worldWidth, h: 80, color: ld.ground, type: 'ground' });
+
+  // Random platforms
+  const numPlatforms = 22 + level * 3;
+  let lastX = 220;
+  for (let i = 0; i < numPlatforms; i++) {
+    const gapX = 160 + Math.random() * 180;
+    const pw = 80 + Math.random() * 130;
+    const py = groundY - 120 - Math.random() * (H * 0.45);
+    platforms.push({
+      x: lastX + gapX,
+      y: py,
+      w: pw,
+      h: 18,
+      color: i % 4 === 0 ? ld.accent : '#334',
+      type: 'platform',
+      moving: Math.random() < 0.2,
+      moveDir: 1,
+      moveRange: 60 + Math.random() * 60,
+      moveOrigin: lastX + gapX,
+      moveSpeed: 0.8 + Math.random() * 0.8,
+    });
+
+    // Coins on platforms
+    const nc = Math.floor(Math.random() * 3) + 1;
+    for (let c = 0; c < nc; c++) {
+      coins.push({ x: lastX + gapX + (pw / (nc + 1)) * (c + 1), y: py - 28, r: 9, collected: false, anim: Math.random() * Math.PI * 2 });
+    }
+    lastX += gapX + pw;
+  }
+
+  // Checkpoints every ~5 platforms
+  for (let i = 4; i < numPlatforms; i += 5) {
+    const p = platforms[i + 1];
+    if (p) {
+      checkpoints.push({ x: p.x + p.w / 2, y: p.y - 60, w: 30, h: 60, triggered: false, lit: false, color: ld.accent });
+    }
+  }
+
+  // End gate
+  const lastPlatform = platforms[platforms.length - 1];
+  checkpoints.push({ x: lastPlatform.x + lastPlatform.w / 2, y: lastPlatform.y - 80, w: 40, h: 80, triggered: false, lit: false, color: '#F5C518', isEnd: true });
+
+  player = createPlayer();
+  camera.x = 0;
+}
+
+// ══════════════════════════════════════════════
+//  DRAW FUNCTIONS
+// ══════════════════════════════════════════════
+function drawBackground() {
+  // Sky gradient
+  const grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, bgLayers[0] || '#0D1B4B');
+  grd.addColorStop(1, bgLayers[1] || '#1A2E6E');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  // Stars (parallax)
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  for (let i = 0; i < 80; i++) {
+    const sx = ((i * 137.5 + camera.x * 0.1) % worldWidth) - camera.x * 0.1;
+    const sy = (i * 53.7) % (H * 0.7);
+    const sr = i % 3 === 0 ? 1.5 : 0.8;
+    ctx.globalAlpha = 0.3 + (Math.sin(Date.now() * 0.002 + i) + 1) * 0.3;
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Far mountains
+  ctx.fillStyle = 'rgba(30,40,80,0.5)';
+  for (let i = 0; i < 8; i++) {
+    const mx = ((i * 350 - camera.x * 0.15) % (W + 400)) - 200;
+    const mh = 100 + (i * 47) % 120;
+    ctx.beginPath();
+    ctx.moveTo(mx, H - 80);
+    ctx.lineTo(mx + 200, H - 80 - mh);
+    ctx.lineTo(mx + 400, H - 80);
+    ctx.fill();
+  }
+}
+
+function drawPlatforms() {
+  for (const p of platforms) {
+    const sx = p.x - camera.x;
+    if (sx + p.w < 0 || sx > W) continue;
+
+    if (p.type === 'ground') {
+      ctx.fillStyle = p.color;
+      ctx.fillRect(sx, p.y, p.w, p.h);
+      ctx.fillStyle = '#1a6b2a';
+      ctx.fillRect(sx, p.y, p.w, 8);
+    } else {
+      ctx.fillStyle = p.color + 'CC';
+      roundRect(ctx, sx, p.y, p.w, p.h, 6);
+      ctx.fill();
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, sx, p.y, p.w, p.h, 6);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      roundRect(ctx, sx + 4, p.y + 2, p.w - 8, 4, 2);
+      ctx.fill();
+    }
+  }
+}
+
+function drawCheckpoints() {
+  const t = Date.now() * 0.003;
+  for (const cp of checkpoints) {
+    const sx = cp.x - camera.x;
+    if (sx < -60 || sx > W + 60) continue;
+
+    if (cp.triggered) {
+      // Glowing triggered checkpoint
+      ctx.globalAlpha = 0.3 + Math.sin(t * 3) * 0.1;
+      ctx.fillStyle = cp.isEnd ? '#F5C518' : '#2ECC71';
+      ctx.beginPath();
+      ctx.arc(sx, cp.y + cp.h / 2, 30 + Math.sin(t * 2) * 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // Flag pole
+    ctx.strokeStyle = '#888';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(sx, cp.y + cp.h);
+    ctx.lineTo(sx, cp.y);
+    ctx.stroke();
+
+    // Flag
+    const flagColor = cp.triggered ? (cp.isEnd ? '#F5C518' : '#2ECC71') : '#E84040';
+    ctx.fillStyle = flagColor;
+    ctx.beginPath();
+    ctx.moveTo(sx, cp.y);
+    ctx.lineTo(sx + 22, cp.y + 10);
+    ctx.lineTo(sx, cp.y + 20);
+    ctx.fill();
+
+    // Glow if not triggered
+    if (!cp.triggered) {
+      ctx.globalAlpha = 0.15 + Math.abs(Math.sin(t)) * 0.15;
+      ctx.fillStyle = '#E84040';
+      ctx.beginPath();
+      ctx.arc(sx, cp.y + 10, 20, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    if (cp.isEnd && !cp.triggered) {
+      ctx.fillStyle = '#F5C518';
+      ctx.font = 'bold 14px Oxanium';
+      ctx.textAlign = 'center';
+      ctx.fillText('🏁 FINISH', sx + 10, cp.y - 10);
+    }
+  }
+}
+
+function drawCoins() {
+  const t = Date.now() * 0.004;
+  for (const c of coins) {
+    if (c.collected) continue;
+    const sx = c.x - camera.x;
+    if (sx < -30 || sx > W + 30) continue;
+    const bob = Math.sin(t + c.anim) * 4;
+
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = '#F5C518';
+    ctx.beginPath();
+    ctx.arc(sx, c.y + bob, c.r + 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = '#F5C518';
+    ctx.strokeStyle = '#FFD700';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(sx, c.y + bob, c.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#FFF8DC';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', sx, c.y + bob);
+  }
+}
+
+function drawPlayer() {
+  if (player.dead) return;
+  const sx = player.x - camera.x;
+
+  // Trail
+  for (let i = player.trail.length - 1; i >= 0; i--) {
+    const tr = player.trail[i];
+    const a = (i / player.trail.length) * 0.3;
+    ctx.globalAlpha = a;
+    ctx.fillStyle = '#1E90FF';
+    ctx.fillRect(tr.x - camera.x + player.w / 2 - 6, tr.y + player.h / 2 - 6, 12, 12);
+  }
+  ctx.globalAlpha = 1;
+
+  // Body
+  if (player.hitTimer > 0 && Math.floor(Date.now() / 100) % 2 === 0) {
+    ctx.globalAlpha = 0.5;
+  }
+
+  // Shadow
+  ctx.globalAlpha *= 0.3;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.ellipse(sx + player.w / 2, player.y + player.h + 4, player.w * 0.5, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = player.hitTimer > 0 && Math.floor(Date.now() / 100) % 2 === 0 ? 0.5 : 1;
+
+  // Character body
+  const bx = sx, by = player.y, bw = player.w, bh = player.h;
+
+  // Legs
+  const legOff = player.grounded ? Math.sin(Date.now() * 0.015) * 5 : 0;
+  ctx.fillStyle = '#2255AA';
+  roundRect(ctx, bx + 4, by + bh - 16, 10, 18, 3);
+  ctx.fill();
+  roundRect(ctx, bx + bw - 14, by + bh - 16, 10, 18, 3);
+  ctx.fill();
+  if (player.grounded) {
+    ctx.fillStyle = '#1A4488';
+    roundRect(ctx, bx + 4, by + bh + legOff - 16, 10, 10, 2);
+    ctx.fill();
+    roundRect(ctx, bx + bw - 14, by + bh - legOff - 16, 10, 10, 2);
+    ctx.fill();
+  }
+
+  // Body
+  ctx.fillStyle = '#E84040';
+  roundRect(ctx, bx + 2, by + 12, bw - 4, bh - 26, 8);
+  ctx.fill();
+
+  // Collar / star
+  ctx.fillStyle = '#F5C518';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('★', bx + bw / 2, by + bh / 2 - 2);
+
+  // Arms
+  ctx.fillStyle = '#E84040';
+  const armY = player.grounded ? -Math.abs(legOff) * 0.5 : 5;
+  roundRect(ctx, bx - 7, by + 14 + armY, 10, 22, 4);
+  ctx.fill();
+  roundRect(ctx, bx + bw - 3, by + 14 - armY, 10, 22, 4);
+  ctx.fill();
+
+  // Head
+  ctx.fillStyle = '#FDBCB4';
+  roundRect(ctx, bx + 4, by - 2, bw - 8, 18, 7);
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#222';
+  const eyeDir = player.facingRight ? 2 : -2;
+  ctx.beginPath();
+  ctx.arc(bx + bw / 2 - 5 + eyeDir, by + 6, 2.5, 0, Math.PI * 2);
+  ctx.arc(bx + bw / 2 + 4 + eyeDir, by + 6, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Avatar emoji hat
+  ctx.font = '14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(playerAvatar === '🦸' ? '🎓' : playerAvatar, bx + bw / 2, by - 2);
+
+  ctx.globalAlpha = 1;
+  ctx.textBaseline = 'alphabetic';
+}
+
+function drawParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.life--;
+    p.alpha = p.life / p.maxLife;
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+    const sx = p.x - camera.x;
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(sx, p.y, p.r * p.alpha, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function spawnParticles(worldX, y, color, count = 8) {
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: worldX, y,
+      vx: (Math.random() - 0.5) * 5,
+      vy: (Math.random() - 0.5) * 5 - 2,
+      r: 3 + Math.random() * 4,
+      color,
+      life: 30 + Math.random() * 20,
+      maxLife: 50,
+      alpha: 1,
+    });
+  }
+}
+
+// ══════════════════════════════════════════════
+//  PHYSICS & GAME LOOP
+// ══════════════════════════════════════════════
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+let raf;
+let lastTime = 0;
+
+function gameLoop(ts) {
+  const dt = Math.min((ts - lastTime) / 16.67, 3);
+  lastTime = ts;
+  if (!gameRunning || paused || quizActive) {
+    raf = requestAnimationFrame(gameLoop);
+    return;
+  }
+
+  // ── UPDATE PLAYER ──
+  const jumpKey = keys['ArrowUp'] || keys[' '] || keys['w'] || keys['W'];
+  const leftKey = keys['ArrowLeft'] || keys['a'] || keys['A'];
+  const rightKey = keys['ArrowRight'] || keys['d'] || keys['D'];
+
+  if (leftKey) { player.vx = -SPEED; player.facingRight = false; }
+  else if (rightKey) { player.vx = SPEED; player.facingRight = true; }
+  else { player.vx *= 0.75; }
+
+  if (jumpKey && player.grounded && !player.jumpPressed) {
+    player.vy = JUMP_FORCE;
+    player.grounded = false;
+    player.jumpPressed = true;
+    spawnParticles(player.x + player.w / 2, player.y + player.h, '#88AAFF', 5);
+  }
+  if (!jumpKey) player.jumpPressed = false;
+
+  player.vy += GRAVITY * dt;
+  if (player.vy > 20) player.vy = 20;
+  player.x += player.vx * dt;
+  player.y += player.vy * dt;
+
+  // Trail
+  player.trail.push({ x: player.x, y: player.y });
+  if (player.trail.length > 6) player.trail.shift();
+
+  // Clamp to world
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.w > worldWidth) player.x = worldWidth - player.w;
+
+  // ── PLATFORM COLLISION ──
+  player.grounded = false;
+  for (const p of platforms) {
+    // Move moving platforms
+    if (p.moving) {
+      p.x += p.moveDir * p.moveSpeed * dt;
+      if (Math.abs(p.x - p.moveOrigin) > p.moveRange) p.moveDir *= -1;
+    }
+
+    const pl = player.x, pr = player.x + player.w;
+    const pt = player.y, pb = player.y + player.h;
+
+    if (pr > p.x && pl < p.x + p.w && pb > p.y && pt < p.y + p.h) {
+      // From top
+      if (player.vy >= 0 && pb - p.y < 20 && pt < p.y + p.h / 2) {
+        player.y = p.y - player.h;
+        player.vy = 0;
+        player.grounded = true;
+        if (p.moving) player.x += p.moveDir * p.moveSpeed * dt;
+      }
+      // From side
+      else if (player.vx > 0 && pr - p.x < 15) { player.x = p.x - player.w; player.vx = 0; }
+      else if (player.vx < 0 && p.x + p.w - pl < 15) { player.x = p.x + p.w; player.vx = 0; }
+      // From bottom
+      else if (player.vy < 0 && p.y + p.h - pt < 15) { player.y = p.y + p.h; player.vy = 1; }
+    }
+  }
+
+  // Fall off world
+  if (player.y > H + 100 && !player.dead) {
+    loseLife();
+  }
+
+  if (player.hitTimer > 0) player.hitTimer -= dt;
+
+  // ── COIN COLLECTION ──
+  for (const c of coins) {
+    if (c.collected) continue;
+    if (Math.abs(player.x + player.w / 2 - c.x) < 22 && Math.abs(player.y + player.h / 2 - c.y) < 22) {
+      c.collected = true;
+      score += 3;
+      spawnParticles(c.x, c.y, '#F5C518', 6);
+      showScorePopup(c.x, c.y - 20, '+3');
+      updateHUD();
+    }
+  }
+
+  // ── CHECKPOINT COLLISION ──
+  for (const cp of checkpoints) {
+    if (cp.triggered) continue;
+    if (player.x + player.w > cp.x - cp.w && player.x < cp.x + cp.w &&
+        player.y + player.h > cp.y && player.y < cp.y + cp.h) {
+      cp.triggered = true;
+      spawnParticles(cp.x, cp.y + cp.h / 2, cp.isEnd ? '#F5C518' : '#2ECC71', 15);
+      if (cp.isEnd) {
+        // Level complete
+        setTimeout(() => endLevel(), 500);
+      } else {
+        triggerQuiz();
+      }
+    }
+  }
+
+  // ── CAMERA ──
+  const targetCamX = player.x - W * 0.35;
+  camera.x += (targetCamX - camera.x) * 0.1;
+  camera.x = Math.max(0, Math.min(camera.x, worldWidth - W));
+
+  // ── DRAW ──
+  ctx.clearRect(0, 0, W, H);
+  drawBackground();
+  drawPlatforms();
+  drawCheckpoints();
+  drawCoins();
+  drawPlayer();
+  drawParticles();
+
+  raf = requestAnimationFrame(gameLoop);
+}
+
+// ══════════════════════════════════════════════
+//  QUIZ SYSTEM
+// ══════════════════════════════════════════════
+function triggerQuiz() {
+  if (currentQIdx >= shuffledQ.length) return;
+  quizActive = true;
+  const q = shuffledQ[currentQIdx];
+
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-result').className = 'quiz-result';
+  const labels = ['A','B','C','D'];
+  const opts = document.getElementById('quiz-opts');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.innerHTML = `<span class="quiz-opt-label">${labels[i]}</span>${opt}`;
+    btn.onclick = () => answerQuiz(i, q.ans, q);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('quiz-overlay').classList.add('show');
+
+  // Timer bar
+  quizTimeLeft = 15;
+  updateQuizBar();
+  quizBarTimer = setInterval(() => {
+    quizTimeLeft -= 0.1;
+    updateQuizBar();
+    if (quizTimeLeft <= 0) {
+      clearInterval(quizBarTimer);
+      answerQuiz(-1, q.ans, q); // timeout
+    }
+  }, 100);
+}
+
+function updateQuizBar() {
+  document.getElementById('quiz-bar').style.width = (quizTimeLeft / 15 * 100) + '%';
+}
+
+function answerQuiz(chosen, correct, q) {
+  clearInterval(quizBarTimer);
+  const optBtns = document.querySelectorAll('.quiz-opt');
+  optBtns.forEach((btn, i) => {
+    btn.onclick = null;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === chosen) btn.classList.add('wrong');
+  });
+
+  const resultEl = document.getElementById('quiz-result');
+  const isCorrect = chosen === correct;
+  const isQuick = quizTimeLeft > 10;
+  questionsAnswered++;
+  currentQIdx++;
+
+  if (isCorrect) {
+    questionsCorrect++;
+    let pts = 10;
+    let msg = `✅ Benar! +10 poin`;
+    if (isQuick) { pts += 5; msg = `✅ Benar & Cepat! +15 poin`; }
+    score += pts;
+    resultEl.className = 'quiz-result show correct-res';
+    resultEl.textContent = msg;
+    spawnParticles(player.x + player.w / 2, player.y, '#2ECC71', 15);
+    showScorePopup(player.x + player.w / 2, player.y - 30, '+' + pts);
+  } else if (chosen === -1) {
+    resultEl.className = 'quiz-result show wrong-res';
+    resultEl.textContent = `⏰ Waktu habis! Jawaban: ${['A','B','C','D'][correct]}`;
+    score = Math.max(0, score - 2);
+    loseLife(true);
+  } else {
+    resultEl.className = 'quiz-result show wrong-res';
+    resultEl.textContent = `❌ Salah! Jawaban: ${['A','B','C','D'][correct]}. -2 poin`;
+    score = Math.max(0, score - 2);
+    loseLife(true);
+  }
+
+  updateHUD();
+  document.getElementById('hud-qcount').textContent = `${questionsAnswered}/10`;
+
+  setTimeout(() => {
+    document.getElementById('quiz-overlay').classList.remove('show');
+    quizActive = false;
+    if (questionsAnswered >= 10 || lives <= 0) {
+      endGame();
+    }
+  }, 1800);
+}
+
+// ══════════════════════════════════════════════
+//  GAME EVENTS
+// ══════════════════════════════════════════════
+function loseLife(noRespawn = false) {
+  if (player.hitTimer > 0) return;
+  lives--;
+  player.hitTimer = 90;
+  updateHUD();
+  if (lives <= 0) { setTimeout(endGame, 500); return; }
+  // Respawn
+  player.y = -200;
+  player.x = Math.max(100, player.x - 100);
+  player.vy = 0;
+  player.vx = 0;
+}
+
+function endLevel() {
+  score += 30;
+  level++;
+  showToast(`🎉 Level ${level - 1} selesai! Bonus +30 poin`);
+  setTimeout(() => {
+    buildWorld();
+    document.getElementById('hud-level').textContent = level;
+  }, 1000);
+}
+
+function showScorePopup(worldX, y, text) {
+  const el = document.createElement('div');
+  el.className = 'score-popup';
+  el.textContent = text;
+  el.style.left = (worldX - camera.x - 20) + 'px';
+  el.style.top = y + 'px';
+  document.getElementById('game-screen').appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+function updateHUD() {
+  document.getElementById('hud-score').textContent = score;
+  const livesEl = document.getElementById('hud-lives');
+  livesEl.textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
+}
+
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ══════════════════════════════════════════════
+//  START / END GAME
+// ══════════════════════════════════════════════
+function startGame() {
+  score = 0; lives = 3; timeLeft = 60; level = 1;
+  questionsAnswered = 0; questionsCorrect = 0; currentQIdx = 0;
+  particles = [];
+
+  // Shuffle questions
+  shuffledQ = [...QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 10);
+
+  resize();
+  buildWorld();
+  updateHUD();
+  document.getElementById('hud-name').textContent = playerName;
+  document.getElementById('hud-avatar').textContent = playerAvatar;
+  document.getElementById('hud-level').textContent = level;
+  document.getElementById('hud-qcount').textContent = '0/10';
+
+  // Countdown
+  let count = 3;
+  const numEl = document.getElementById('countdown-num');
+  function tick() {
+    numEl.style.display = 'block';
+    numEl.textContent = count === 0 ? 'GO!' : count;
+    numEl.style.animation = 'none';
+    void numEl.offsetWidth;
+    numEl.style.animation = 'countPop .8s ease forwards';
+    count--;
+    if (count >= 0) setTimeout(tick, 800);
+    else {
+      setTimeout(() => { numEl.style.display = 'none'; }, 800);
+      gameRunning = true;
+      lastTime = performance.now();
+      raf = requestAnimationFrame(gameLoop);
+
+      // Game timer
+      gameTimer = setInterval(() => {
+        if (!gameRunning || paused || quizActive) return;
+        timeLeft--;
+        const timerEl = document.getElementById('hud-timer');
+        timerEl.textContent = timeLeft;
+        timerEl.className = 'hud-timer-val' + (timeLeft <= 10 ? ' urgent' : '');
+        if (timeLeft <= 0) {
+          clearInterval(gameTimer);
+          endGame();
+        }
+      }, 1000);
+    }
+  }
+  tick();
+}
+
+function endGame() {
+  gameRunning = false;
+  cancelAnimationFrame(raf);
+  clearInterval(gameTimer);
+  clearInterval(quizBarTimer);
+
+  // Build leaderboard data
+  const finalScore = score;
+  const accuracy = questionsAnswered > 0 ? Math.round(questionsCorrect / questionsAnswered * 100) : 0;
+
+  // Simulated other players
+  const fakeNames = ['Budi_PJK','Sari123','GarduPancasila','IndonesiaMaju','BhinnekaTunggal'];
+  const entries = [
+    { name: playerName, avatar: playerAvatar, score: finalScore, accuracy, isPlayer: true },
+    ...fakeNames.slice(0, 4).map(n => ({
+      name: n,
+      avatar: AVATARS[Math.floor(Math.random() * AVATARS.length)],
+      score: Math.floor(Math.random() * 120) + 20,
+      accuracy: Math.floor(Math.random() * 60) + 30,
+      isPlayer: false,
+    }))
+  ].sort((a, b) => b.score - a.score);
+
+  document.getElementById('lb-sub').textContent =
+    `${accuracy}% akurasi • ${questionsCorrect}/${questionsAnswered} soal benar`;
+
+  const rankColors = ['gold','silver','bronze'];
+  const rankEmojis = ['🥇','🥈','🥉'];
+  const lbEl = document.getElementById('lb-entries');
+  lbEl.innerHTML = '';
+  entries.slice(0, 5).forEach((e, i) => {
+    const el = document.createElement('div');
+    el.className = 'lb-entry';
+    el.style.animationDelay = (i * 0.1) + 's';
+    if (e.isPlayer) el.style.background = 'rgba(30,144,255,0.1)';
+    el.innerHTML = `
+      <div class="lb-rank ${rankColors[i] || ''}">${i < 3 ? rankEmojis[i] : (i + 1)}</div>
+      <div class="lb-avatar-icon">${e.avatar}</div>
+      <div class="lb-info">
+        <div class="lb-pname">${e.name}${e.isPlayer ? ' (Kamu)' : ''}</div>
+        <div class="lb-detail">${e.accuracy}% akurasi</div>
+      </div>
+      <div class="lb-pts">${e.score}</div>
+    `;
+    lbEl.appendChild(el);
+  });
+
+  showScreen('leaderboard-screen');
+}
+
+// ══════════════════════════════════════════════
+//  UI
+// ══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.toggle('hidden', s.id !== id);
+  });
+}
+
+// Welcome Screen Setup
+const avatarRow = document.getElementById('avatar-row');
+AVATARS.forEach((av, i) => {
+  const el = document.createElement('div');
+  el.className = 'avatar-opt' + (i === 0 ? ' sel' : '');
+  el.textContent = av;
+  el.onclick = () => {
+    document.querySelectorAll('.avatar-opt').forEach(a => a.classList.remove('sel'));
+    el.classList.add('sel');
+    playerAvatar = av;
+  };
+  avatarRow.appendChild(el);
+});
+
+const modeSelect = document.getElementById('mode-select');
+MODES.forEach((m, i) => {
+  const el = document.createElement('div');
+  el.className = 'mode-opt' + (i === 0 ? ' sel' : '');
+  el.innerHTML = `<span class="mode-emoji">${m.emoji}</span><div class="mode-name">${m.name}</div><div class="mode-hint">${m.hint}</div>`;
+  el.onclick = () => {
+    document.querySelectorAll('.mode-opt').forEach(a => a.classList.remove('sel'));
+    el.classList.add('sel');
+    selectedMode = m.id;
+  };
+  modeSelect.appendChild(el);
+});
+
+document.getElementById('btn-play').onclick = () => {
+  const nameVal = document.getElementById('name-input').value.trim();
+  if (!nameVal) { showToast('⚠️ Masukkan nama dulu!'); return; }
+  playerName = nameVal;
+  showScreen('game-screen');
+  setTimeout(startGame, 100);
+};
+
+document.getElementById('btn-again').onclick = () => {
+  showScreen('welcome');
+};
+
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-play').click();
+});
+
+// Keyboard
+window.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if (e.key === 'Escape' && gameRunning) {
+    paused = !paused;
+    document.getElementById('pause-overlay').classList.toggle('show', paused);
+  }
+  if (e.key === ' ') e.preventDefault();
+});
+window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+// Mobile controls
+const mobLeft = document.getElementById('mob-left');
+const mobRight = document.getElementById('mob-right');
+const mobJump = document.getElementById('mob-jump');
+function mobDown(key) { keys[key] = true; }
+function mobUp(key) { keys[key] = false; }
+mobLeft.addEventListener('touchstart', e => { e.preventDefault(); mobDown('ArrowLeft'); });
+mobLeft.addEventListener('touchend', e => { e.preventDefault(); mobUp('ArrowLeft'); });
+mobRight.addEventListener('touchstart', e => { e.preventDefault(); mobDown('ArrowRight'); });
+mobRight.addEventListener('touchend', e => { e.preventDefault(); mobUp('ArrowRight'); });
+mobJump.addEventListener('touchstart', e => { e.preventDefault(); mobDown('ArrowUp'); });
+mobJump.addEventListener('touchend', e => { e.preventDefault(); mobUp('ArrowUp'); });
+
+// Stars BG
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 100; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2.5 + 0.5;
+  s.style.cssText = `
+    left:${Math.random()*100}%;top:${Math.random()*100}%;
+    width:${size}px;height:${size}px;
+    --d:${2 + Math.random() * 4}s;
+    --op:${0.4 + Math.random() * 0.6};
+    animation-delay:${Math.random() * 4}s;
+  `;
+  starsEl.appendChild(s);
+}
+</script>
+</body>
+</html>

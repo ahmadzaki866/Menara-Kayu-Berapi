@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Start Game</h2>
+<input id="name" placeholder="Nama">
+<button onclick="start()">Start</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+function start(){
+  const name = document.getElementById("name").value;
+  localStorage.setItem("name", name);
+  socket.emit("startGame");
+}
+socket.on("gameStarted", ({map})=>{
+  localStorage.setItem("map", JSON.stringify(map));
+  window.location.href = "game.html";
+});
+</script>
+</body>
+</html>

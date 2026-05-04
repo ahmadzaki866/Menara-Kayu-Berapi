@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pancasila Quest — Dokumen Konsep & Bank Soal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+  :root {
+    --red: #e63946;
+    --gold: #f9c74f;
+    --teal: #2a9d8f;
+    --blue: #457b9d;
+    --orange: #f4a261;
+    --dark: #0f0e17;
+    --card: #1a1a2e;
+    --border: #2a2a4a;
+    --text: #fffffe;
+    --muted: #a7a9be;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    line-height: 1.7;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #0f0e17 0%, #1a1a2e 50%, #0f0e17 100%);
+    border-bottom: 3px solid var(--red);
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(230,57,70,0.12) 0%, transparent 70%);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    padding: 6px 18px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--red) 50%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ===== LAYOUT ===== */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 40px auto;
+    max-width: 1100px;
+  }
+
+  .toc h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--gold);
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+
+  .toc ol {
+    padding-left: 20px;
+    column-count: 2;
+    column-gap: 40px;
+  }
+
+  .toc li {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .toc a:hover { color: var(--gold); }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .section-number {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.8rem;
+    color: var(--border);
+    line-height: 1;
+    min-width: 52px;
+  }
+
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .section-emoji {
+    font-size: 1.8rem;
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--red);
+    transform: translateY(-2px);
+  }
+
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .tag-red { background: rgba(230,57,70,0.2); color: var(--red); border: 1px solid var(--red); }
+  .tag-gold { background: rgba(249,199,79,0.2); color: var(--gold); border: 1px solid var(--gold); }
+  .tag-teal { background: rgba(42,157,143,0.2); color: var(--teal); border: 1px solid var(--teal); }
+  .tag-blue { background: rgba(69,123,157,0.2); color: #74b3d4; border: 1px solid var(--blue); }
+  .tag-orange { background: rgba(244,162,97,0.2); color: var(--orange); border: 1px solid var(--orange); }
+
+  /* ===== MODE CARDS ===== */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .mode-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
+
+  .mode-race::before { background: var(--red); }
+  .mode-puzzle::before { background: var(--teal); }
+  .mode-last::before { background: #9b59b6; }
+  .mode-unity::before { background: var(--orange); }
+  .mode-adventure::before { background: var(--blue); }
+  .mode-speed::before { background: var(--gold); }
+  .mode-team::before { background: #e91e63; }
+
+  .mode-icon {
+    font-size: 2.4rem;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .mode-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .mode-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .mode-detail {
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .mode-detail p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .mode-detail p:last-child { margin-bottom: 0; }
+
+  .mode-detail strong { color: var(--text); }
+
+  /* ===== QUIZ BANK ===== */
+  .quiz-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .filter-btn {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  .quiz-category {
+    margin-bottom: 40px;
+  }
+
+  .quiz-cat-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cat-sila1 { background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid #d4af37; }
+  .cat-sila2 { background: rgba(230,57,70,0.15); color: var(--red); border: 1px solid var(--red); }
+  .cat-sila3 { background: rgba(42,157,143,0.15); color: var(--teal); border: 1px solid var(--teal); }
+  .cat-sila4 { background: rgba(244,162,97,0.15); color: var(--orange); border: 1px solid var(--orange); }
+  .cat-sila5 { background: rgba(69,123,157,0.15); color: #74b3d4; border: 1px solid var(--blue); }
+  .cat-umum { background: rgba(155,89,182,0.15); color: #c39bd3; border: 1px solid #9b59b6; }
+
+  .quiz-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+  }
+
+  .quiz-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 16px 10px;
+  }
+
+  .quiz-table tr.q-row {
+    background: var(--card);
+  }
+
+  .quiz-table tr.q-row td {
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .quiz-table tr.q-row td:first-child {
+    border-left: 1px solid var(--border);
+    border-radius: 12px 0 0 12px;
+    width: 36px;
+    color: var(--muted);
+    font-weight: 800;
+    font-size: 0.8rem;
+  }
+
+  .quiz-table tr.q-row td:last-child {
+    border-right: 1px solid var(--border);
+    border-radius: 0 12px 12px 0;
+  }
+
+  .q-text { font-weight: 700; color: var(--text); margin-bottom: 6px; }
+
+  .q-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .q-opt {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .q-opt.correct {
+    background: rgba(42,157,143,0.2);
+    border-color: var(--teal);
+    color: #52b788;
+    font-weight: 800;
+  }
+
+  .diff-easy { color: #52b788; }
+  .diff-medium { color: var(--gold); }
+  .diff-hard { color: var(--red); }
+
+  /* ===== SCORE SYSTEM ===== */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .score-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .score-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .score-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .flow-step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 32px;
+    min-width: 280px;
+    text-align: center;
+    font-weight: 700;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .flow-step:hover { border-color: var(--red); }
+
+  .flow-arrow {
+    color: var(--red);
+    font-size: 1.5rem;
+    line-height: 1.6;
+  }
+
+  /* ===== TABLE ===== */
+  .specs-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .specs-table th, .specs-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+
+  .specs-table th {
+    background: rgba(255,255,255,0.04);
+    font-weight: 800;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .specs-table tr:last-child td { border-bottom: none; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 700px) {
+    .hero { padding: 40px 20px; }
+    .container { padding: 0 16px; }
+    .toc ol { column-count: 1; }
+    .mode-grid { grid-template-columns: 1fr; }
+    .score-grid { grid-template-columns: 1fr 1fr; }
+    .flow-step { min-width: 240px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Game Design Document v1.0</div>
+  <h1>🇮🇩 PANCASILA QUEST</h1>
+  <p>Dokumen Konsep Lengkap — Mode Permainan, Sistem Skor, Bank Soal & Panduan Aset untuk Multiplayer Online Platformer Edukasi</p>
+</div>
+
+<!-- TOC -->
+<div class="container">
+<div class="toc">
+  <h3>📋 Daftar Isi</h3>
+  <ol>
+    <li><a href="#overview">Overview & Genre</a></li>
+    <li><a href="#alur">Alur Game (Flow)</a></li>
+    <li><a href="#avatar">Sistem Avatar & Login</a></li>
+    <li><a href="#modes">7 Mode Permainan</a></li>
+    <li><a href="#mechanics">Mekanik Platformer</a></li>
+    <li><a href="#scoring">Sistem Skor & Poin</a></li>
+    <li><a href="#maps">Desain Map (4 Tema)</a></li>
+    <li><a href="#quiz">Bank Soal (60+ Soal)</a></li>
+    <li><a href="#assets">Panduan Aset Visual</a></li>
+    <li><a href="#tech">Rekomendasi Teknologi</a></li>
+  </ol>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <!-- 1. OVERVIEW -->
+  <section class="section" id="overview">
+    <div class="section-header">
+      <div class="section-number">01</div>
+      <div>
+        <div class="section-emoji">🎮</div>
+        <div class="section-title">Overview & Genre</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        🏷️ Identitas Game
+        <span class="tag tag-red">FINAL</span>
+      </div>
+      <table class="specs-table">
+        <tr><th>Judul</th><td><strong>Pancasila Quest: Unity Arena</strong></td></tr>
+        <tr><th>Genre</th><td>Multiplayer Online · 2D Side-Scrolling Platformer · Quiz-Based</td></tr>
+        <tr><th>Platform</th><td>Website (Browser) — Desktop & Mobile friendly</td></tr>
+        <tr><th>Pemain</th><td>2–8 pemain per room (tergantung mode)</td></tr>
+        <tr><th>Tema Edukasi</th><td>Pancasila — 5 Sila, Sejarah Perumusan, Nilai-nilai, Penerapan</td></tr>
+        <tr><th>Target Usia</th><td>SMP – SMA (12–18 tahun) / bisa untuk umum</td></tr>
+        <tr><th>Durasi Sesi</th><td>5–15 menit per game (tergantung mode)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧠 Core Gameplay Loop</div>
+      <p style="color:var(--muted); margin-bottom:12px;">Inti permainan menggabungkan dua komponen utama: <strong>skill platforming</strong> (navigasi, timing, refleks) dan <strong>pengetahuan Pancasila</strong> (menjawab soal kuis). Keduanya sama-sama menentukan kemenangan.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
+        <div style="background:rgba(230,57,70,0.1); border:1px solid rgba(230,57,70,0.3); border-radius:12px; padding:16px; text-align:center;">
+          <div style="font-size:2rem; margin-bottom:8px;">🏃</div>
+          <div style="font-weight:800; margin-bottom:4px;">BERGERAK</div>
+          <div style="font-size:0.8rem; color:var(--muted);">Navigasi platform, hindari jebakan, raih checkpoint</div>
+        </div>
+        <div style="background:rgba(249,199,79,0.1); border:1px solid rgba(249,199,79,0.3); border-radius:12px; padding:16px; text-align:center;">
+          <div style="font-size:2rem; margin-bottom:8px;">❓</div>
+          <div style="font-weight:800; margin-bottom:4px;">JAWAB</div>
+          <div style="font-size:0.8rem; color:var(--muted);">Soal muncul di checkpoint/box — jawab dalam waktu terbatas</div>
+        </div>
+        <div style="background:rgba(42,157,143,0.1); border:1px solid rgba(42,157,143,0.3); border-radius:12px; padding:16px; text-align:center;">
+          <div style="font-size:2rem; margin-bottom:8px;">🏆</div>
+          <div style="font-weight:800; margin-bottom:4px;">MENANG</div>
+          <div style="font-size:0.8rem; color:var(--muted);">Poin tertinggi / bertahan terakhir / selesaikan tujuan mode</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ALUR GAME -->
+  <section class="section" id="alur">
+    <div class="section-header">
+      <div class="section-number">02</div>
+      <div>
+        <div class="section-emoji">🔄</div>
+        <div class="section-title">Alur Game (Flow)</div>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step" style="border-color:var(--gold);">🌐 Buka Website Pancasila Quest</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">👤 Input Nama Alias + Pilih Avatar (8 pilihan)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">🏠 Masuk Lobby — Lihat pemain online, room aktif</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" style="border-color:var(--teal);">🎮 Pilih Mode Game (7 mode tersedia)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">🚪 Buat Room BARU atau JOIN room yang ada</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">⏳ Tunggu pemain lain — Host bisa mulai kapan saja (min. 2 pemain)</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" style="border-color:var(--red);">🎯 GAME DIMULAI — Countdown 3..2..1..GO!</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">🏃 Platforming + Menjawab Soal sesuai mode yang dipilih</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step" style="border-color:var(--gold);">🧮 Hitung Skor Final — Poin + Bonus + Multiplier</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">📊 Leaderboard — Lihat ranking semua pemain</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">🔁 Main Lagi (room sama) atau Keluar ke Lobby</div>
+    </div>
+  </section>
+
+  <!-- 3. AVATAR -->
+  <section class="section" id="avatar">
+    <div class="section-header">
+      <div class="section-number">03</div>
+      <div>
+        <div class="section-emoji">🧑</div>
+        <div class="section-title">Sistem Avatar & Login</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Registrasi Awal (No Account)</div>
+      <p style="color:var(--muted);">Pemain tidak perlu membuat akun. Cukup isi nama alias (3–16 karakter) dan pilih avatar. Data sesi disimpan sementara di browser. Jika ingin simpan statistik, bisa daftar opsional via email.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎭 8 Karakter Avatar</div>
+      <table class="specs-table">
+        <tr><th>No</th><th>Nama Avatar</th><th>Tema</th><th>Warna Khas</th></tr>
+        <tr><td>1</td><td>🧑 Pelajar Putra</td><td>Seragam sekolah merah putih</td><td>Merah, Putih</td></tr>
+        <tr><td>2</td><td>👧 Pelajar Putri (Hijab)</td><td>Seragam + hijab merah</td><td>Merah, Hijau Muda</td></tr>
+        <tr><td>3</td><td>🦸 Pahlawan Pancasila</td><td>Cape, helm, bintang di dada</td><td>Merah, Gold</td></tr>
+        <tr><td>4</td><td>👨‍🌾 Petani Nusantara</td><td>Caping, baju hijau, cangkul</td><td>Hijau Tua, Coklat</td></tr>
+        <tr><td>5</td><td>🤖 Robot Edukasi</td><td>Robot berwarna biru metalik</td><td>Biru, Cyan</td></tr>
+        <tr><td>6</td><td>💃 Penari Tradisional</td><td>Kebaya, mahkota emas</td><td>Ungu, Gold</td></tr>
+        <tr><td>7</td><td>🔬 Ilmuwan Muda</td><td>Jas putih, kacamata, labu</td><td>Putih, Biru Navy</td></tr>
+        <tr><td>8</td><td>⚽ Atlet Garuda</td><td>Jersey merah nomor 17</td><td>Merah, Navy</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎨 Kustomisasi Warna</div>
+      <p style="color:var(--muted);">Setiap avatar memiliki 4 variasi palet warna yang bisa dipilih pemain. Warna avatar ditampilkan di atas kepala pemain dalam game bersama nama alias-nya.</p>
+    </div>
+  </section>
+
+  <!-- 4. MODES -->
+  <section class="section" id="modes">
+    <div class="section-header">
+      <div class="section-number">04</div>
+      <div>
+        <div class="section-emoji">🎮</div>
+        <div class="section-title">7 Mode Permainan</div>
+      </div>
+    </div>
+
+    <div class="mode-grid">
+
+      <!-- Mode 1 -->
+      <div class="mode-card mode-race">
+        <span class="mode-icon">⚔️</span>
+        <div class="mode-name">Quiz Race Mode</div>
+        <span class="tag tag-red">KOMPETITIF</span>
+        <p class="mode-desc" style="margin-top:10px;">Balapan platformer + kuis. Siapa yang paling cepat dan paling pintar — dia yang menang.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 2–8 orang</p>
+          <p><strong>Durasi:</strong> 5–8 menit</p>
+          <p><strong>Map:</strong> Linear, kiri ke kanan</p>
+          <p><strong>Mekanik:</strong> Semua start bersamaan → hadapi rintangan platform → tiba di Quiz Gate → jawab soal → benar = lanjut, salah = tertahan 3 detik</p>
+          <p><strong>Menang:</strong> Pemain pertama yang mencapai FINISH LINE + skor tertinggi</p>
+          <p><strong>Soal per game:</strong> 5–8 soal checkpoint</p>
+          <p><strong>Bonus:</strong> +5 poin per detik sisa waktu jika jawaban benar</p>
+        </div>
+      </div>
+
+      <!-- Mode 2 -->
+      <div class="mode-card mode-puzzle">
+        <span class="mode-icon">🧩</span>
+        <div class="mode-name">Puzzle Platform Quiz</div>
+        <span class="tag tag-teal">STRATEGI</span>
+        <p class="mode-desc" style="margin-top:10px;">Setiap jawaban menentukan jalur yang bisa dilewati. Salah jalan = jatuh ke jurang.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 1–6 orang</p>
+          <p><strong>Durasi:</strong> 8–12 menit</p>
+          <p><strong>Map:</strong> Bercabang (branching paths)</p>
+          <p><strong>Mekanik:</strong> Di tiap persimpangan muncul soal → pilihan A/B/C/D = jalur kiri/kanan/atas/platform yang berbeda → jalur benar membawa lebih banyak koin, jalur salah ada jebakan/rintangan</p>
+          <p><strong>Menang:</strong> Akumulasi poin dari koin yang dikumpulkan + jawaban benar</p>
+          <p><strong>Soal per game:</strong> 10–15 percabangan</p>
+          <p><strong>Bonus:</strong> Jalur tersembunyi dengan 3× koin jika jawaban benar semua</p>
+        </div>
+      </div>
+
+      <!-- Mode 3 -->
+      <div class="mode-card mode-last">
+        <span class="mode-icon">👑</span>
+        <div class="mode-name">Last Stand Quiz Mode</div>
+        <span class="tag" style="background:rgba(155,89,182,0.2);color:#c39bd3;border:1px solid #9b59b6;">ELIMINASI</span>
+        <p class="mode-desc" style="margin-top:10px;">Battle royale edukasi. Jawaban salah = jatuh. Arena makin kecil setiap ronde.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 4–8 orang</p>
+          <p><strong>Durasi:</strong> 6–10 menit</p>
+          <p><strong>Map:</strong> Arena terbuka, makin menyempit</p>
+          <p><strong>Mekanik:</strong> Ronde 1: soal mudah → salah = hilang 1 nyawa. Ronde 2: medium → salah = tereliminasi langsung. Ronde 3+: soal sulit, platform bergoyang/jatuh. Pemain yang salah menjawab platform-nya ambruk.</p>
+          <p><strong>Menang:</strong> Pemain terakhir yang masih berdiri</p>
+          <p><strong>Soal per game:</strong> 3–5 soal per ronde, 4–6 ronde</p>
+          <p><strong>Bonus:</strong> Setiap ronde bertahan = +20 poin survival</p>
+        </div>
+      </div>
+
+      <!-- Mode 4 -->
+      <div class="mode-card mode-unity">
+        <span class="mode-icon">🤝</span>
+        <div class="mode-name">Unity Challenge Mode</div>
+        <span class="tag tag-orange">CO-OP</span>
+        <p class="mode-desc" style="margin-top:10px;">Mode kerja sama tim — mencerminkan nilai gotong royong Pancasila.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 4–8 (2 tim, 2–4 per tim)</p>
+          <p><strong>Durasi:</strong> 10–15 menit</p>
+          <p><strong>Map:</strong> Paralel — dua jalur terpisah, terhubung di titik tertentu</p>
+          <p><strong>Mekanik:</strong>
+            <br>• Tombol harus diinjak oleh 2 anggota tim bersamaan untuk membuka pintu
+            <br>• Platform aktif jika semua anggota tim menjawab benar
+            <br>• Soal tim: satu pemain dapat soal, anggota lain dapat petunjuk (puzzle bersama)
+            <br>• Pemain bisa "revive" rekan yang jatuh dengan menjawab soal bonus
+          </p>
+          <p><strong>Menang:</strong> Tim pertama yang capai tujuan akhir dengan poin gabungan tertinggi</p>
+          <p><strong>Bonus:</strong> +15 poin jika semua anggota menjawab benar bersamaan</p>
+        </div>
+      </div>
+
+      <!-- Mode 5 -->
+      <div class="mode-card mode-adventure">
+        <span class="mode-icon">🏁</span>
+        <div class="mode-name">Checkpoint Quiz Adventure</div>
+        <span class="tag tag-blue">PETUALANGAN</span>
+        <p class="mode-desc" style="margin-top:10px;">RPG-lite platformer. Eksplorasi map panjang dengan checkpoint dan soal sebagai kunci progress.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 1–6 orang (asinkron — tidak harus bareng)</p>
+          <p><strong>Durasi:</strong> 10–15 menit</p>
+          <p><strong>Map:</strong> Panjang (seperti level Mario), 3 area berbeda</p>
+          <p><strong>Mekanik:</strong>
+            <br>• 7 checkpoint di sepanjang map
+            <br>• Di setiap checkpoint → soal wajib muncul
+            <br>• Benar = save progress, lanjut
+            <br>• Salah = respawn di checkpoint terdekat (progress tidak hilang)
+            <br>• Ada item tersembunyi (poin bonus) di platform sulit
+          </p>
+          <p><strong>Menang:</strong> Pemain dengan poin terbanyak saat waktu habis</p>
+          <p><strong>Soal per game:</strong> 7 soal checkpoint + 3–5 soal item bonus</p>
+        </div>
+      </div>
+
+      <!-- Mode 6 -->
+      <div class="mode-card mode-speed">
+        <span class="mode-icon">⚡</span>
+        <div class="mode-name">Speed Quiz Rush</div>
+        <span class="tag tag-gold">FAST-PACED</span>
+        <p class="mode-desc" style="margin-top:10px;">Soal kilat, platform bergerak, waktu sempit. Untuk pemain yang suka tantangan intensitas tinggi.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 2–8 orang</p>
+          <p><strong>Durasi:</strong> 3–5 menit (mode tercepat!)</p>
+          <p><strong>Map:</strong> Kecil, padat, platform bergerak terus</p>
+          <p><strong>Mekanik:</strong>
+            <br>• Soal muncul setiap 15 detik, waktu jawab hanya 8 detik
+            <br>• Platform bergerak — tidak boleh berdiam diri
+            <br>• Jawaban benar = platform stabil 5 detik + poin
+            <br>• Jawaban salah = platform makin cepat bergerak
+            <br>• Soal makin susah tiap menit
+          </p>
+          <p><strong>Menang:</strong> Poin tertinggi saat countdown habis</p>
+          <p><strong>Soal per game:</strong> 15–20 soal cepat</p>
+          <p><strong>Multiplier:</strong> Streak 3 benar = 2× poin, streak 5 = 3× poin</p>
+        </div>
+      </div>
+
+      <!-- Mode 7 -->
+      <div class="mode-card mode-team">
+        <span class="mode-icon">🏆</span>
+        <div class="mode-name">Team Battle Quiz Mode</div>
+        <span class="tag" style="background:rgba(233,30,99,0.2);color:#f06292;border:1px solid #e91e63;">TIM VS TIM</span>
+        <p class="mode-desc" style="margin-top:10px;">2–3 tim saling bersaing. Rebut zona, aktifkan platform, kalahkan tim lain.</p>
+        <div class="mode-detail">
+          <p><strong>Pemain:</strong> 4–9 orang (2–3 tim)</p>
+          <p><strong>Durasi:</strong> 10–12 menit</p>
+          <p><strong>Map:</strong> Arena terbagi zona — merah, hijau, biru</p>
+          <p><strong>Mekanik:</strong>
+            <br>• Setiap zona punya "Quiz Totem" — jawab benar = rebut zona itu
+            <br>• Zona dikuasai = hasilkan 1 poin/detik untuk tim
+            <br>• Soal Quiz Totem bisa dijawab siapa saja — maka tim lawan juga bisa merebut balik
+            <br>• Anggota tim di zona yang sama mendapat bonus pertahanan
+            <br>• Setiap 3 menit ada "Soal Mega" — poin 3× lipat
+          </p>
+          <p><strong>Menang:</strong> Tim dengan total poin terbanyak saat waktu habis</p>
+          <p><strong>Soal per game:</strong> Terus-menerus (berbasis zona, ~20–30 soal)</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 5. MECHANICS -->
+  <section class="section" id="mechanics">
+    <div class="section-header">
+      <div class="section-number">05</div>
+      <div>
+        <div class="section-emoji">🕹️</div>
+        <div class="section-title">Mekanik Platformer</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 Kontrol Karakter</div>
+      <table class="specs-table">
+        <tr><th>Aksi</th><th>Keyboard</th><th>Mobile</th></tr>
+        <tr><td>Jalan Kiri/Kanan</td><td>← → / A D</td><td>D-pad virtual kiri/kanan</td></tr>
+        <tr><td>Lompat</td><td>↑ / W / Space</td><td>Tombol Jump (kanan bawah)</td></tr>
+        <tr><td>Lompat Ganda</td><td>Space ×2 (jika power-up)</td><td>Tap Jump ×2</td></tr>
+        <tr><td>Interaksi / Jawab</td><td>E / Enter</td><td>Tombol Interact</td></tr>
+        <tr><td>Jongkok</td><td>↓ / S</td><td>D-pad bawah</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚠️ Jenis Rintangan</div>
+      <table class="specs-table">
+        <tr><th>Rintangan</th><th>Efek</th><th>Mode yang Ada</th></tr>
+        <tr><td>🕳️ Jurang/Void</td><td>Respawn ke checkpoint terakhir, -5 poin</td><td>Semua mode</td></tr>
+        <tr><td>⬛ Platform Goyang</td><td>Bergerak, sulit dipijak</td><td>Last Stand, Speed Rush</td></tr>
+        <tr><td>🔥 Platform Panas</td><td>Bertahan max 3 detik</td><td>Race, Adventure</td></tr>
+        <tr><td>🌀 Angin/Pusaran</td><td>Mendorong karakter arah tertentu</td><td>Speed Rush, Team Battle</td></tr>
+        <tr><td>🚧 Batu Jatuh</td><td>Kena = terpental</td><td>Adventure, Puzzle</td></tr>
+        <tr><td>❓ Kotak Misteri</td><td>Soal bonus muncul + bisa power-up</td><td>Semua mode</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Power-Up Items</div>
+      <table class="specs-table">
+        <tr><th>Item</th><th>Efek</th><th>Ikon</th></tr>
+        <tr><td>Tameng Pancasila</td><td>Imun 10 detik dari rintangan fisik</td><td>🛡️</td></tr>
+        <tr><td>Bintang Emas</td><td>Poin ×2 selama 20 detik</td><td>⭐</td></tr>
+        <tr><td>Jam Pasir</td><td>Waktu jawab soal +5 detik</td><td>⏳</td></tr>
+        <tr><td>Kaca Pembesar</td><td>Lihat petunjuk soal berikutnya</td><td>🔍</td></tr>
+        <tr><td>Sayap Garuda</td><td>Double jump aktif 15 detik</td><td>🦅</td></tr>
+        <tr><td>Pertanyaan Ganda</td><td>Soal berikutnya bernilai 2× poin</td><td>💎</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6. SCORING -->
+  <section class="section" id="scoring">
+    <div class="section-header">
+      <div class="section-number">06</div>
+      <div>
+        <div class="section-emoji">🧮</div>
+        <div class="section-title">Sistem Skor & Poin</div>
+      </div>
+    </div>
+
+    <div class="score-grid" style="margin-bottom:20px;">
+      <div class="score-card">
+        <div class="score-value" style="color:var(--teal);">+10</div>
+        <div class="score-label">Jawaban Benar (Dasar)</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:var(--gold);">+5</div>
+        <div class="score-label">Bonus Kecepatan (< 5 detik)</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:var(--orange);">+20</div>
+        <div class="score-label">Selesaikan Level/Stage</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:#9b59b6;">+15</div>
+        <div class="score-label">Survival Bonus (tiap ronde)</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:var(--red);">-3</div>
+        <div class="score-label">Jawaban Salah (Penalti)</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:var(--red);">-5</div>
+        <div class="score-label">Jatuh ke Jurang</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:var(--blue);">×2</div>
+        <div class="score-label">Streak 3 Benar Berturut</div>
+      </div>
+      <div class="score-card">
+        <div class="score-value" style="color:var(--gold);">×3</div>
+        <div class="score-label">Streak 5 Benar Berturut</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 Tingkat Kesulitan Soal & Poin</div>
+      <table class="specs-table">
+        <tr><th>Tingkat</th><th>Poin Dasar</th><th>Waktu Jawab</th><th>Kapan Muncul</th></tr>
+        <tr><td><span class="diff-easy">● MUDAH</span></td><td>+8 poin</td><td>20 detik</td><td>Awal game / ronde pertama</td></tr>
+        <tr><td><span class="diff-medium">● SEDANG</span></td><td>+12 poin</td><td>15 detik</td><td>Tengah game</td></tr>
+        <tr><td><span class="diff-hard">● SULIT</span></td><td>+20 poin</td><td>10 detik</td><td>Akhir game / ronde final</td></tr>
+        <tr><td>💎 SOAL MEGA</td><td>+30 poin</td><td>12 detik</td><td>Event khusus per mode</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7. MAPS -->
+  <section class="section" id="maps">
+    <div class="section-header">
+      <div class="section-number">07</div>
+      <div>
+        <div class="section-emoji">🗺️</div>
+        <div class="section-title">Desain Map (4 Tema)</div>
+      </div>
+    </div>
+
+    <div class="mode-grid">
+      <div class="card">
+        <div class="card-title">🏫 Map 1 — Lingkungan Sekolah</div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Platform berupa bangku, rak buku, atap gedung, tiang bendera. Warna siang hari cerah. Cocok untuk mode Race dan Adventure.</p>
+        <p style="font-size:0.85rem;"><strong>Elemen unik:</strong> Papan tulis interaktif (soal muncul di sini), loker sebagai checkpoint, kantin sebagai area bonus poin</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🏡 Map 2 — Desa Nusantara</div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Platform berupa atap rumah adat, batu sungai, jembatan bambu. Sunset orange. Cocok untuk mode Unity Co-op dan Puzzle.</p>
+        <p style="font-size:0.85rem;"><strong>Elemen unik:</strong> Sawah terracing sebagai platform bertingkat, padi emas sebagai koin, rumah adat sebagai shelter sementara</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🏙️ Map 3 — Perkotaan Malam</div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Platform berupa atap gedung, tangga api, crane. Malam hari dengan lampu kota. Cocok untuk Last Stand dan Speed Rush.</p>
+        <p style="font-size:0.85lem;"><strong>Elemen unik:</strong> Monas sebagai landmark tengah, platform bergerak berupa taksi terbang, neon sign sebagai petunjuk arah</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🏛️ Map 4 — Gedung Negara</div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Platform berupa tangga gedung MPR/DPR, balkon, koridor. Megah dan formal. Cocok untuk Team Battle.</p>
+        <p style="font-size:0.85rem;"><strong>Elemen unik:</strong> Garuda Pancasila raksasa di tengah sebagai landmark, platform berbentuk buku UUD, karpet merah sebagai jalur cepat</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. QUIZ BANK -->
+  <section class="section" id="quiz">
+    <div class="section-header">
+      <div class="section-number">08</div>
+      <div>
+        <div class="section-emoji">📚</div>
+        <div class="section-title">Bank Soal (60+ Soal)</div>
+      </div>
+    </div>
+
+    <p style="color:var(--muted); margin-bottom:32px;">Soal dibagi berdasarkan 5 Sila Pancasila + kategori Umum/Sejarah. Setiap soal memiliki tingkat kesulitan. <strong>Jawaban benar ditandai dengan border hijau.</strong></p>
+
+    <!-- SILA 1 -->
+    <div class="quiz-category">
+      <div class="quiz-cat-title cat-sila1">☪ SILA KE-1 — Ketuhanan Yang Maha Esa</div>
+      <table class="quiz-table">
+        <thead><tr><th>#</th><th>Soal & Pilihan Jawaban</th><th>Level</th></tr></thead>
+        <tbody>
+
+          <tr class="q-row">
+            <td>S1-01</td>
+            <td>
+              <div class="q-text">Simbol dari sila pertama Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Rantai</span>
+                <span class="q-opt correct">B. Bintang Emas</span>
+                <span class="q-opt">C. Pohon Beringin</span>
+                <span class="q-opt">D. Kepala Banteng</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S1-02</td>
+            <td>
+              <div class="q-text">Sikap yang mencerminkan sila pertama Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Bersaing dengan teman</span>
+                <span class="q-opt">B. Memaksakan agama kepada orang lain</span>
+                <span class="q-opt correct">C. Menghormati pemeluk agama lain</span>
+                <span class="q-opt">D. Ikut ibadah agama lain</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S1-03</td>
+            <td>
+              <div class="q-text">Berapa jumlah agama yang diakui secara resmi oleh pemerintah Indonesia?</div>
+              <div class="q-options">
+                <span class="q-opt">A. 4</span>
+                <span class="q-opt">B. 5</span>
+                <span class="q-opt correct">C. 6</span>
+                <span class="q-opt">D. 7</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S1-04</td>
+            <td>
+              <div class="q-text">Toleransi antar umat beragama diatur dalam UUD 1945 pasal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Pasal 27 ayat 1</span>
+                <span class="q-opt correct">B. Pasal 29 ayat 2</span>
+                <span class="q-opt">C. Pasal 31 ayat 1</span>
+                <span class="q-opt">D. Pasal 33 ayat 3</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S1-05</td>
+            <td>
+              <div class="q-text">Makna "Ketuhanan Yang Maha Esa" berarti bangsa Indonesia...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Hanya mengenal satu agama saja</span>
+                <span class="q-opt correct">B. Percaya kepada Tuhan sesuai agama dan kepercayaan masing-masing</span>
+                <span class="q-opt">C. Wajib memeluk agama Islam</span>
+                <span class="q-opt">D. Bebas tidak beragama</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S1-06</td>
+            <td>
+              <div class="q-text">Tempat ibadah agama Hindu di Indonesia disebut...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Gereja</span>
+                <span class="q-opt">B. Kelenteng</span>
+                <span class="q-opt correct">C. Pura</span>
+                <span class="q-opt">D. Wihara</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SILA 2 -->
+    <div class="quiz-category">
+      <div class="quiz-cat-title cat-sila2">⛓️ SILA KE-2 — Kemanusiaan yang Adil dan Beradab</div>
+      <table class="quiz-table">
+        <thead><tr><th>#</th><th>Soal & Pilihan Jawaban</th><th>Level</th></tr></thead>
+        <tbody>
+
+          <tr class="q-row">
+            <td>S2-01</td>
+            <td>
+              <div class="q-text">Simbol dari sila kedua Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Bintang</span>
+                <span class="q-opt correct">B. Rantai</span>
+                <span class="q-opt">C. Padi dan Kapas</span>
+                <span class="q-opt">D. Pohon Beringin</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S2-02</td>
+            <td>
+              <div class="q-text">Contoh penerapan sila kedua dalam kehidupan sehari-hari adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Mencuri karena kelaparan</span>
+                <span class="q-opt">B. Mengejek teman yang berbeda suku</span>
+                <span class="q-opt correct">C. Menolong orang yang membutuhkan tanpa pamrih</span>
+                <span class="q-opt">D. Hanya bergaul dengan orang satu agama</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S2-03</td>
+            <td>
+              <div class="q-text">Rantai pada lambang Pancasila terdiri dari rantai bulat dan rantai kotak. Rantai kotak melambangkan...</div>
+              <div class="q-options">
+                <span class="q-opt correct">A. Laki-laki</span>
+                <span class="q-opt">B. Perempuan</span>
+                <span class="q-opt">C. Anak-anak</span>
+                <span class="q-opt">D. Orang tua</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S2-04</td>
+            <td>
+              <div class="q-text">Hak asasi manusia (HAM) dalam konteks Pancasila harus diimbangi dengan...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Kebebasan tanpa batas</span>
+                <span class="q-opt correct">B. Kewajiban dan tanggung jawab sosial</span>
+                <span class="q-opt">C. Kepentingan diri sendiri</span>
+                <span class="q-opt">D. Kekuasaan pemerintah</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S2-05</td>
+            <td>
+              <div class="q-text">Perilaku yang melanggar sila kedua Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Membantu korban bencana alam</span>
+                <span class="q-opt">B. Menjunjung persamaan derajat</span>
+                <span class="q-opt correct">C. Melakukan diskriminasi terhadap minoritas</span>
+                <span class="q-opt">D. Menghormati hak orang lain</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S2-06</td>
+            <td>
+              <div class="q-text">Indonesia termasuk negara yang menandatangani Deklarasi Universal Hak Asasi Manusia yang diadopsi PBB pada tahun...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 1945</span>
+                <span class="q-opt correct">B. 1948</span>
+                <span class="q-opt">C. 1950</span>
+                <span class="q-opt">D. 1955</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SILA 3 -->
+    <div class="quiz-category">
+      <div class="quiz-cat-title cat-sila3">🌳 SILA KE-3 — Persatuan Indonesia</div>
+      <table class="quiz-table">
+        <thead><tr><th>#</th><th>Soal & Pilihan Jawaban</th><th>Level</th></tr></thead>
+        <tbody>
+
+          <tr class="q-row">
+            <td>S3-01</td>
+            <td>
+              <div class="q-text">Simbol sila ketiga Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Bintang Emas</span>
+                <span class="q-opt">B. Rantai</span>
+                <span class="q-opt correct">C. Pohon Beringin</span>
+                <span class="q-opt">D. Kepala Banteng</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S3-02</td>
+            <td>
+              <div class="q-text">Semboyan bangsa Indonesia yang mencerminkan persatuan dalam keberagaman adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Pancasila Sakti</span>
+                <span class="q-opt">B. Garuda Indonesia</span>
+                <span class="q-opt correct">C. Bhinneka Tunggal Ika</span>
+                <span class="q-opt">D. Nusantara Bersatu</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S3-03</td>
+            <td>
+              <div class="q-text">Bhinneka Tunggal Ika berasal dari bahasa...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Jawa Kuno</span>
+                <span class="q-opt correct">B. Sansekerta / Kawi (Jawa Kuno)</span>
+                <span class="q-opt">C. Melayu Kuno</span>
+                <span class="q-opt">D. Sunda Kuno</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S3-04</td>
+            <td>
+              <div class="q-text">Wawasan Nusantara adalah cara pandang bangsa Indonesia tentang...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Ekonomi dan perdagangan</span>
+                <span class="q-opt">B. Hubungan luar negeri</span>
+                <span class="q-opt correct">C. Diri dan lingkungannya berdasarkan Pancasila dan UUD 1945</span>
+                <span class="q-opt">D. Sistem pemerintahan nasional</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S3-05</td>
+            <td>
+              <div class="q-text">Indonesia terdiri dari lebih dari berapa pulau?</div>
+              <div class="q-options">
+                <span class="q-opt">A. 5.000 pulau</span>
+                <span class="q-opt">B. 10.000 pulau</span>
+                <span class="q-opt correct">C. 17.000 pulau</span>
+                <span class="q-opt">D. 20.000 pulau</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S3-06</td>
+            <td>
+              <div class="q-text">Pohon Beringin melambangkan persatuan karena...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Pohonnya yang tinggi dan kuat</span>
+                <span class="q-opt correct">B. Akar-akarnya yang kuat dan menaungi semua yang di bawahnya</span>
+                <span class="q-opt">C. Daunnya yang rindang dan hijau</span>
+                <span class="q-opt">D. Kayunya yang keras dan tahan lama</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S3-07</td>
+            <td>
+              <div class="q-text">Sumpah Pemuda yang memperkuat persatuan bangsa diikrarkan pada tanggal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 17 Agustus 1945</span>
+                <span class="q-opt">B. 1 Juni 1945</span>
+                <span class="q-opt correct">C. 28 Oktober 1928</span>
+                <span class="q-opt">D. 20 Mei 1908</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SILA 4 -->
+    <div class="quiz-category">
+      <div class="quiz-cat-title cat-sila4">🐃 SILA KE-4 — Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan</div>
+      <table class="quiz-table">
+        <thead><tr><th>#</th><th>Soal & Pilihan Jawaban</th><th>Level</th></tr></thead>
+        <tbody>
+
+          <tr class="q-row">
+            <td>S4-01</td>
+            <td>
+              <div class="q-text">Simbol sila keempat Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Rantai</span>
+                <span class="q-opt">B. Bintang</span>
+                <span class="q-opt correct">C. Kepala Banteng</span>
+                <span class="q-opt">D. Pohon Beringin</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S4-02</td>
+            <td>
+              <div class="q-text">Musyawarah mufakat berarti...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Keputusan diambil oleh pemimpin saja</span>
+                <span class="q-opt">B. Voting dengan suara terbanyak</span>
+                <span class="q-opt correct">C. Pengambilan keputusan bersama dengan kesepakatan semua pihak</span>
+                <span class="q-opt">D. Pendapat minoritas yang diikuti</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S4-03</td>
+            <td>
+              <div class="q-text">Lembaga perwakilan rakyat di Indonesia yang bertugas membuat undang-undang adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Presiden</span>
+                <span class="q-opt correct">B. DPR (Dewan Perwakilan Rakyat)</span>
+                <span class="q-opt">C. MA (Mahkamah Agung)</span>
+                <span class="q-opt">D. BPK (Badan Pemeriksa Keuangan)</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S4-04</td>
+            <td>
+              <div class="q-text">Kepala Banteng sebagai simbol sila keempat melambangkan...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Kekuatan militer bangsa</span>
+                <span class="q-opt">B. Keberanian dalam berperang</span>
+                <span class="q-opt correct">C. Musyawarah — banteng suka berkumpul dalam kelompok</span>
+                <span class="q-opt">D. Kekayaan alam Indonesia</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S4-05</td>
+            <td>
+              <div class="q-text">Prinsip demokrasi Pancasila mengutamakan...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Kepentingan individu di atas segalanya</span>
+                <span class="q-opt correct">B. Kepentingan bersama melalui musyawarah</span>
+                <span class="q-opt">C. Kekuasaan absolut pemimpin</span>
+                <span class="q-opt">D. Kebebasan tanpa batas</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S4-06</td>
+            <td>
+              <div class="q-text">MPR (Majelis Permusyawaratan Rakyat) terdiri dari anggota DPR dan...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Presiden dan Wakil Presiden</span>
+                <span class="q-opt">B. Anggota kabinet</span>
+                <span class="q-opt correct">C. DPD (Dewan Perwakilan Daerah)</span>
+                <span class="q-opt">D. Mahkamah Konstitusi</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S4-07</td>
+            <td>
+              <div class="q-text">Pemilihan umum (Pemilu) di Indonesia dilaksanakan setiap...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 3 tahun sekali</span>
+                <span class="q-opt correct">B. 5 tahun sekali</span>
+                <span class="q-opt">C. 6 tahun sekali</span>
+                <span class="q-opt">D. 7 tahun sekali</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SILA 5 -->
+    <div class="quiz-category">
+      <div class="quiz-cat-title cat-sila5">🌾 SILA KE-5 — Keadilan Sosial bagi Seluruh Rakyat Indonesia</div>
+      <table class="quiz-table">
+        <thead><tr><th>#</th><th>Soal & Pilihan Jawaban</th><th>Level</th></tr></thead>
+        <tbody>
+
+          <tr class="q-row">
+            <td>S5-01</td>
+            <td>
+              <div class="q-text">Simbol sila kelima Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Bintang</span>
+                <span class="q-opt">B. Rantai</span>
+                <span class="q-opt correct">C. Padi dan Kapas</span>
+                <span class="q-opt">D. Pohon Beringin</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S5-02</td>
+            <td>
+              <div class="q-text">Padi melambangkan pangan (kebutuhan pokok) sedangkan kapas melambangkan...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Kemewahan</span>
+                <span class="q-opt correct">B. Sandang (pakaian)</span>
+                <span class="q-opt">C. Pertanian</span>
+                <span class="q-opt">D. Kesehatan</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S5-03</td>
+            <td>
+              <div class="q-text">Keadilan sosial dalam Pancasila berarti...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Semua rakyat mendapat jumlah yang sama persis</span>
+                <span class="q-opt correct">B. Setiap rakyat mendapat hak dan kesempatan yang setara</span>
+                <span class="q-opt">C. Orang kaya wajib memberi kepada orang miskin</span>
+                <span class="q-opt">D. Pemerintah mengatur semua harta warga</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S5-04</td>
+            <td>
+              <div class="q-text">Program pemerintah yang mencerminkan nilai sila kelima adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Program militerisasi</span>
+                <span class="q-opt correct">B. Kartu Indonesia Pintar (KIP) dan Kartu Indonesia Sehat (KIS)</span>
+                <span class="q-opt">C. Program ekspor barang mewah</span>
+                <span class="q-opt">D. Pembangunan gedung pemerintahan</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S5-05</td>
+            <td>
+              <div class="q-text">Gotong royong merupakan cerminan sila kelima yang bermakna...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Bekerja keras sendiri untuk kepentingan pribadi</span>
+                <span class="q-opt correct">B. Bekerja bersama-sama untuk kepentingan umum</span>
+                <span class="q-opt">C. Memberikan gaji kepada pekerja</span>
+                <span class="q-opt">D. Mengambil sebagian milik orang lain</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>S5-06</td>
+            <td>
+              <div class="q-text">Hak warga negara Indonesia untuk mendapatkan pendidikan dijamin dalam UUD 1945 pasal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Pasal 27</span>
+                <span class="q-opt">B. Pasal 29</span>
+                <span class="q-opt correct">C. Pasal 31</span>
+                <span class="q-opt">D. Pasal 33</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- UMUM / SEJARAH -->
+    <div class="quiz-category">
+      <div class="quiz-cat-title cat-umum">🏛️ UMUM — Sejarah & Kelembagaan Pancasila</div>
+      <table class="quiz-table">
+        <thead><tr><th>#</th><th>Soal & Pilihan Jawaban</th><th>Level</th></tr></thead>
+        <tbody>
+
+          <tr class="q-row">
+            <td>U-01</td>
+            <td>
+              <div class="q-text">Pancasila pertama kali dikemukakan oleh Soekarno pada tanggal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 17 Agustus 1945</span>
+                <span class="q-opt">B. 22 Juni 1945</span>
+                <span class="q-opt correct">C. 1 Juni 1945</span>
+                <span class="q-opt">D. 28 Oktober 1928</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-02</td>
+            <td>
+              <div class="q-text">Sidang BPUPKI (Badan Penyelidik Usaha-usaha Persiapan Kemerdekaan Indonesia) pertama berlangsung pada tanggal...</div>
+              <div class="q-options">
+                <span class="q-opt correct">A. 29 Mei – 1 Juni 1945</span>
+                <span class="q-opt">B. 10–16 Juli 1945</span>
+                <span class="q-opt">C. 18 Agustus 1945</span>
+                <span class="q-opt">D. 22 Juni 1945</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-03</td>
+            <td>
+              <div class="q-text">Kata "Pancasila" berasal dari bahasa Sansekerta yang berarti...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Lima Tujuan</span>
+                <span class="q-opt correct">B. Lima Dasar/Sendi</span>
+                <span class="q-opt">C. Lima Bangsa</span>
+                <span class="q-opt">D. Lima Pahlawan</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-04</td>
+            <td>
+              <div class="q-text">Lambang Garuda Pancasila dirancang oleh...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Soekarno</span>
+                <span class="q-opt">B. Mohammad Hatta</span>
+                <span class="q-opt correct">C. Sultan Hamid II</span>
+                <span class="q-opt">D. Ki Hajar Dewantara</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-05</td>
+            <td>
+              <div class="q-text">Pada perisai burung Garuda, warna merah dan putih memiliki arti...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Merah = berani, Putih = suci</span>
+                <span class="q-opt">B. Merah = darah, Putih = tulang</span>
+                <span class="q-opt correct">C. Merah = keberanian, Putih = kesucian</span>
+                <span class="q-opt">D. Merah = cinta, Putih = perdamaian</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-06</td>
+            <td>
+              <div class="q-text">Jumlah bulu pada ekor Burung Garuda Pancasila adalah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 7 helai</span>
+                <span class="q-opt correct">B. 8 helai</span>
+                <span class="q-opt">C. 17 helai</span>
+                <span class="q-opt">D. 45 helai</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-07</td>
+            <td>
+              <div class="q-text">Jumlah bulu pada sayap kanan dan kiri burung Garuda masing-masing berjumlah...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 15 helai</span>
+                <span class="q-opt">B. 16 helai</span>
+                <span class="q-opt correct">C. 17 helai</span>
+                <span class="q-opt">D. 18 helai</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-08</td>
+            <td>
+              <div class="q-text">Piagam Jakarta (Jakarta Charter) ditandatangani pada tanggal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 1 Juni 1945</span>
+                <span class="q-opt correct">B. 22 Juni 1945</span>
+                <span class="q-opt">C. 17 Agustus 1945</span>
+                <span class="q-opt">D. 18 Agustus 1945</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-09</td>
+            <td>
+              <div class="q-text">Tanggal 1 Juni diperingati sebagai...</div>
+              <div class="q-options">
+                <span class="q-opt">A. Hari Kemerdekaan</span>
+                <span class="q-opt">B. Hari Pahlawan</span>
+                <span class="q-opt correct">C. Hari Lahir Pancasila</span>
+                <span class="q-opt">D. Hari Kebangkitan Nasional</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-10</td>
+            <td>
+              <div class="q-text">Pancasila ditetapkan secara resmi sebagai dasar negara pada tanggal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 1 Juni 1945</span>
+                <span class="q-opt">B. 17 Agustus 1945</span>
+                <span class="q-opt correct">C. 18 Agustus 1945</span>
+                <span class="q-opt">D. 22 Juni 1945</span>
+              </div>
+            </td>
+            <td><span class="diff-medium">● Sedang</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-11</td>
+            <td>
+              <div class="q-text">Garuda Pancasila memegang pita bertuliskan...</div>
+              <div class="q-options">
+                <span class="q-opt">A. "Indonesia Raya"</span>
+                <span class="q-opt">B. "Pancasila Sakti"</span>
+                <span class="q-opt correct">C. "Bhinneka Tunggal Ika"</span>
+                <span class="q-opt">D. "Merdeka atau Mati"</span>
+              </div>
+            </td>
+            <td><span class="diff-easy">● Mudah</span></td>
+          </tr>
+
+          <tr class="q-row">
+            <td>U-12</td>
+            <td>
+              <div class="q-text">PPKI (Panitia Persiapan Kemerdekaan Indonesia) dibentuk sebagai pengganti BPUPKI pada tanggal...</div>
+              <div class="q-options">
+                <span class="q-opt">A. 1 Juni 1945</span>
+                <span class="q-opt">B. 7 Agustus 1945</span>
+                <span class="q-opt correct">C. 7 Agustus 1945</span>
+                <span class="q-opt">D. 18 Agustus 1945</span>
+              </div>
+            </td>
+            <td><span class="diff-hard">● Sulit</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- 9. ASSETS -->
+  <section class="section" id="assets">
+    <div class="section-header">
+      <div class="section-number">09</div>
+      <div>
+        <div class="section-emoji">🎨</div>
+        <div class="section-title">Panduan Aset Visual</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎨 Palet Warna Utama</div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+        <div style="background:#e63946; width:80px; height:60px; border-radius:10px; display:flex; align-items:flex-end; padding:6px;">
+          <span style="font-size:0.7rem; color:white; font-weight:800;">#E63946</span>
+        </div>
+        <div style="background:#f9c74f; width:80px; height:60px; border-radius:10px; display:flex; align-items:flex-end; padding:6px;">
+          <span style="font-size:0.7rem; color:#1d3557; font-weight:800;">#F9C74F</span>
+        </div>
+        <div style="background:#2a9d8f; width:80px; height:60px; border-radius:10px; display:flex; align-items:flex-end; padding:6px;">
+          <span style="font-size:0.7rem; color:white; font-weight:800;">#2A9D8F</span>
+        </div>
+        <div style="background:#457b9d; width:80px; height:60px; border-radius:10px; display:flex; align-items:flex-end; padding:6px;">
+          <span style="font-size:0.7rem; color:white; font-weight:800;">#457B9D</span>
+        </div>
+        <div style="background:#f4a261; width:80px; height:60px; border-radius:10px; display:flex; align-items:flex-end; padding:6px;">
+          <span style="font-size:0.7rem; color:white; font-weight:800;">#F4A261</span>
+        </div>
+        <div style="background:#1a1a2e; width:80px; height:60px; border-radius:10px; border:1px solid #2a2a4a; display:flex; align-items:flex-end; padding:6px;">
+          <span style="font-size:0.7rem; color:#a7a9be; font-weight:800;">#1A1A2E</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📐 Resolusi & Spesifikasi Sprite</div>
+      <table class="specs-table">
+        <tr><th>Aset</th><th>Ukuran</th><th>Format</th><th>Keterangan</th></tr>
+        <tr><td>Avatar (idle)</td><td>64×96 px</td><td>PNG / SVG</td><td>Sprite sheet 4 frame</td></tr>
+        <tr><td>Avatar (run)</td><td>64×96 px</td><td>PNG Sprite Sheet</td><td>6 frame animasi</td></tr>
+        <tr><td>Avatar (jump)</td><td>64×96 px</td><td>PNG Sprite Sheet</td><td>3 frame</td></tr>
+        <tr><td>Platform (tile)</td><td>32×32 px</td><td>PNG</td><td>Tileable</td></tr>
+        <tr><td>Background</td><td>1920×1080 px</td><td>PNG / WebP</td><td>Parallax 3 layer</td></tr>
+        <tr><td>UI Icons</td><td>64×64 px</td><td>SVG</td><td>Scalable</td></tr>
+        <tr><td>Quiz Box</td><td>100×100 px</td><td>PNG / SVG</td><td>Animasi glow</td></tr>
+        <tr><td>Coin/Poin</td><td>32×32 px</td><td>PNG Sprite Sheet</td><td>8 frame spin</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎵 Audio Guide</div>
+      <table class="specs-table">
+        <tr><th>Sound</th><th>Format</th><th>Durasi</th><th>Keterangan</th></tr>
+        <tr><td>BGM Menu</td><td>MP3/OGG</td><td>60–90 detik (loop)</td><td>Upbeat gamelan modern</td></tr>
+        <tr><td>BGM Game Race</td><td>MP3/OGG</td><td>120 detik (loop)</td><td>Fast, energetik</td></tr>
+        <tr><td>BGM Sekolah</td><td>MP3/OGG</td><td>90 detik (loop)</td><td>Fun, playful</td></tr>
+        <tr><td>SFX Jawaban Benar</td><td>WAV/OGG</td><td>0.5 detik</td><td>Ding!</td></tr>
+        <tr><td>SFX Jawaban Salah</td><td>WAV/OGG</td><td>0.8 detik</td><td>Buzz!</td></tr>
+        <tr><td>SFX Lompat</td><td>WAV</td><td>0.3 detik</td><td>Woosh kecil</td></tr>
+        <tr><td>SFX Koin</td><td>WAV</td><td>0.2 detik</td><td>Ping!</td></tr>
+        <tr><td>SFX Countdown</td><td>WAV</td><td>3 detik</td><td>3..2..1..GO!</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10. TECH -->
+  <section class="section" id="tech">
+    <div class="section-header">
+      <div class="section-number">10</div>
+      <div>
+        <div class="section-emoji">💻</div>
+        <div class="section-title">Rekomendasi Teknologi</div>
+      </div>
+    </div>
+
+    <div class="mode-grid">
+      <div class="card">
+        <div class="card-title">🎮 Game Engine/Framework</div>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Untuk game berbasis web:</p>
+        <table class="specs-table">
+          <tr><td><strong>Phaser 3</strong></td><td style="color:var(--teal);">★★★★★ Direkomendasikan</td></tr>
+          <tr><td><strong>Kaboom.js</strong></td><td style="color:var(--gold);">★★★★ Mudah untuk pemula</td></tr>
+          <tr><td><strong>PixiJS</strong></td><td style="color:var(--muted);">★★★ Render cepat</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">🔌 Multiplayer (Real-time)</div>
+        <table class="specs-table">
+          <tr><td><strong>Socket.io</strong></td><td style="color:var(--teal);">★★★★★ Direkomendasikan</td></tr>
+          <tr><td><strong>Firebase Realtime DB</strong></td><td style="color:var(--gold);">★★★★ No backend sendiri</td></tr>
+          <tr><td><strong>Colyseus</strong></td><td style="color:var(--muted);">★★★★ Khusus game</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">🖥️ Backend</div>
+        <table class="specs-table">
+          <tr><td><strong>Node.js + Express</strong></td><td style="color:var(--teal);">Room management</td></tr>
+          <tr><td><strong>Firebase Auth</strong></td><td style="color:var(--gold);">Nama alias & sesi</td></tr>
+          <tr><td><strong>MongoDB/Firestore</strong></td><td style="color:var(--muted);">Bank soal & skor</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">🎨 Desain Tools</div>
+        <table class="specs-table">
+          <tr><td><strong>Figma</strong></td><td style="color:var(--teal);">UI/UX mockup</td></tr>
+          <tr><td><strong>Aseprite</strong></td><td style="color:var(--gold);">Sprite pixel art</td></tr>
+          <tr><td><strong>Inkscape</strong></td><td style="color:var(--muted);">SVG aset gratis</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end container -->
+
+<footer style="text-align:center; padding:40px 20px; color:var(--muted); border-top:1px solid var(--border); margin-top:40px;">
+  <p style="font-family:'Fredoka One',cursive; font-size:1.2rem; color:var(--gold); margin-bottom:8px;">🇮🇩 Pancasila Quest — Game Design Document</p>
+  <p style="font-size:0.85rem;">Dokumen Konsep v1.0 · 60+ Bank Soal · 7 Mode Permainan · 8 Avatar · 4 Map Tema</p>
+</footer>
+
+</body>
+</html>
