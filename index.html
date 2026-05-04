@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Menara Kayu Berapi — Kuis Pancasila</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fire: #ff4500; --fire2: #ff8c00; --gold: #f9c74f; --teal: #2a9d8f;
+            --blue: #457b9d; --dark: #0d0a07; --card: #1a1208; --border: #3a2a10;
+            --text: #fff8ee; --muted: #b09060; --green: #52b788; --purple: #9b59b6;
+            --red: #e63946; --wood: #8B5E3C; --wood2: #6B4226; --wood3: #A0724A;
+            /* NEW: wood background palette */
+            --bg-wood-light: #c8924a; --bg-wood-mid: #a06830; --bg-wood-dark: #7a4e20;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-serif; overflow: hidden; height: 100vh; }
+
+        .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s; }
+        .screen.hidden { opacity: 0; pointer-events: none; }
+
+        #screen-title { background: radial-gradient(ellipse 80% 80% at 50% 50%, #1a0e05 0%, #0d0a07 100%); overflow: hidden; }
+
+        .title-logo { font-family: 'Fredoka One', cursive; font-size: clamp(2.2rem, 6vw, 4.5rem); background: linear-gradient(135deg, #f9c74f 0%, #ff4500 50%, #f9c74f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; position: relative; z-index: 1; filter: drop-shadow(0 0 30px rgba(255,69,0,0.6)); animation: pulse-logo 2s ease-in-out infinite; }
+        @keyframes pulse-logo { 0%,100% { filter: drop-shadow(0 0 20px rgba(255,69,0,0.4)); } 50% { filter: drop-shadow(0 0 50px rgba(255,140,0,0.8)); } }
+
+        .fire-icon { font-size: 3rem; animation: flicker 0.4s ease-in-out infinite alternate; display: inline-block; }
+        @keyframes flicker { from { transform: scaleY(1) rotate(-2deg); } to { transform: scaleY(1.1) rotate(2deg); } }
+
+        .btn { background: linear-gradient(135deg, #ff4500, #ff8c00); color: white; border: none; padding: 14px 36px; border-radius: 100px; font-family: 'Fredoka One', cursive; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 1; box-shadow: 0 4px 20px rgba(255,69,0,0.4); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,140,0,0.6); }
+        .btn:active { transform: translateY(0); }
+        .btn-gold { background: linear-gradient(135deg, #f9c74f, #e07b00); color: #1d1005; box-shadow: 0 4px 20px rgba(249,199,79,0.4); }
+        .btn-teal { background: linear-gradient(135deg, #2a9d8f, #1a6b60); box-shadow: 0 4px 20px rgba(42,157,143,0.4); }
+        .btn-sm { padding: 10px 24px; font-size: 1rem; }
+        .btn-xs { padding: 7px 16px; font-size: 0.85rem; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--muted); box-shadow: none; }
+        .btn-outline:hover { border-color: var(--fire); color: var(--text); box-shadow: 0 4px 16px rgba(255,69,0,0.3); }
+        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); box-shadow: none; }
+        .btn-ghost:hover { background: rgba(255,69,0,0.1); border-color: var(--fire); color: var(--text); }
+        .btn-danger { background: linear-gradient(135deg, #e63946, #a01020); box-shadow: 0 4px 20px rgba(230,57,70,0.4); }
+
+        .lobby-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px 32px; width: 90%; max-width: 460px; }
+        .lobby-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--gold); margin-bottom: 6px; text-align: center; }
+        .lobby-sub { color: var(--muted); text-align: center; font-size: 0.9rem; margin-bottom: 24px; }
+
+        .input-field { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; outline: none; transition: border-color 0.2s; }
+        .input-field:focus { border-color: var(--gold); }
+        .input-label { font-size: 0.8rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; margin-top: 14px; }
+
+        .room-code-display { font-family: 'Fredoka One', cursive; font-size: 3.5rem; letter-spacing: 10px; color: var(--gold); text-align: center; background: rgba(249,199,79,0.1); border: 2px solid rgba(249,199,79,0.3); border-radius: 16px; padding: 16px; margin: 16px 0; filter: drop-shadow(0 0 10px rgba(249,199,79,0.4)); }
+
+        .player-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+        .player-slot { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
+        .player-slot.you { border-color: rgba(249,199,79,0.4); background: rgba(249,199,79,0.07); }
+        .player-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); animation: pulse-dot 1s ease-in-out infinite; }
+        @keyframes pulse-dot { 0%,100% { transform: scale(1) } 50% { transform: scale(1.4) } }
+        .player-name { font-weight: 800; font-size: 0.95rem; flex: 1; }
+        .player-badge { font-size: 0.7rem; background: rgba(249,199,79,0.2); color: var(--gold); border: 1px solid rgba(249,199,79,0.4); border-radius: 100px; padding: 2px 8px; }
+
+        .diff-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+        .diff-btn { border: 2px solid var(--border); border-radius: 10px; padding: 10px 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 800; transition: all 0.2s; background: rgba(255,255,255,0.04); color: var(--muted); }
+        .diff-btn:hover, .diff-btn.active { border-color: var(--gold); color: var(--text); background: rgba(249,199,79,0.1); }
+
+        .avatar-row { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0; }
+        .avatar-mini { flex-shrink: 0; width: 60px; height: 80px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); transition: all 0.2s; gap: 4px; }
+        .avatar-mini:hover, .avatar-mini.selected { border-color: var(--gold); background: rgba(249,199,79,0.1); transform: scale(1.05); }
+        .avatar-mini .avlbl { font-size: 0.6rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+
+        .waiting-dots { display: flex; justify-content: center; gap: 8px; margin: 12px 0; }
+        .waiting-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--fire); animation: waiting-anim 1.2s ease-in-out infinite; }
+        .waiting-dot:nth-child(2) { animation-delay: 0.2s; }
+        .waiting-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes waiting-anim { 0%,100% { opacity:0.3; transform:scale(0.8) } 50% { opacity:1; transform:scale(1.2) } }
+
+        /* ===== HUD ===== */
+        #hud { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: rgba(5,3,1,0.93); border-bottom: 2px solid var(--fire); display: flex; align-items: center; gap: 12px; padding: 0 14px; z-index: 100; backdrop-filter: blur(8px); }
+        .hud-item { display: flex; flex-direction: column; align-items: center; }
+        .hud-label { font-size: 0.6rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .hud-val { font-family: 'Fredoka One', cursive; font-size: 1.2rem; }
+        .hud-div { width: 1px; height: 28px; background: var(--border); }
+        #hud-score { color: var(--gold); }
+        #hud-floor { color: var(--fire2); }
+        #hud-lives { display: flex; gap: 3px; }
+        .lh { font-size: 1rem; transition: all 0.3s; }
+        .lh.lost { filter: grayscale(1) opacity(0.3); transform: scale(0.7); }
+
+        /* Jump Points HUD - NEW */
+        #hud-jumps { color: var(--teal); font-family: 'Fredoka One', cursive; font-size: 1.2rem; }
+        #hud-jumps-bar { width: 60px; height: 6px; background: var(--border); border-radius: 3px; margin-top: 2px; overflow: hidden; }
+        #hud-jumps-fill { height: 100%; background: linear-gradient(90deg, var(--teal), #52b788); border-radius: 3px; transition: width 0.3s; }
+        #hud-jumps.low { color: var(--red); animation: jump-warn 0.5s ease-in-out infinite alternate; }
+        @keyframes jump-warn { from { opacity:1; } to { opacity:0.4; } }
+
+        #hud-slots { display: flex; gap: 5px; align-items: center; }
+        .q-slot { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; transition: all 0.3s; }
+        .q-slot.easy { background: rgba(82,183,136,0.25); border-color: var(--green); color: var(--green); }
+        .q-slot.medium { background: rgba(249,199,79,0.25); border-color: var(--gold); color: var(--gold); }
+        .q-slot.hard { background: rgba(255,69,0,0.25); border-color: var(--fire); color: var(--fire); }
+        .q-slot.empty { background: rgba(255,255,255,0.03); }
+
+        #hud-bonus { margin-left: auto; font-size: 0.75rem; background: rgba(255,140,0,0.15); border: 1px solid var(--fire2); border-radius: 100px; padding: 3px 10px; color: var(--fire2); display: none; }
+
+        /* ===== GAME CANVAS ===== */
+        #game-area { position: fixed; inset: 56px 320px 36px 0; overflow: hidden; }
+        #game-canvas { display: block; }
+
+        /* ===== QUIZ PANEL ===== */
+        #quiz-panel { position: fixed; right: 0; top: 56px; bottom: 0; width: 320px; background: rgba(5,3,1,0.95); border-left: 2px solid var(--fire); z-index: 90; display: flex; flex-direction: column; padding: 12px; gap: 8px; overflow-y: auto; backdrop-filter: blur(10px); transition: transform 0.3s; }
+        #quiz-panel.hidden { transform: translateX(100%); }
+
+        .qp-title { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: var(--fire2); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .quiz-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; flex-shrink: 0; }
+        .quiz-card.active { border-color: var(--gold); }
+
+        .quiz-diff-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+        .tag-easy { background: rgba(82,183,136,0.2); color: var(--green); border: 1px solid var(--green); }
+        .tag-medium { background: rgba(249,199,79,0.2); color: var(--gold); border: 1px solid var(--gold); }
+        .tag-hard { background: rgba(255,69,0,0.2); color: var(--fire); border: 1px solid var(--fire); }
+
+        .quiz-q-text { font-size: 0.82rem; font-weight: 700; line-height: 1.45; margin-bottom: 10px; color: var(--text); }
+        .answer-grid-small { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .ans-btn { background: rgba(255,255,255,0.05); border: 1.5px solid transparent; border-radius: 8px; padding: 8px 8px; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--text); transition: all 0.15s; text-align: left; }
+        .ans-btn:hover:not(:disabled) { background: rgba(255,140,0,0.15); border-color: var(--fire2); }
+        .ans-btn.A { border-color: rgba(42,157,143,0.4); }
+        .ans-btn.B { border-color: rgba(230,57,70,0.4); }
+        .ans-btn.C { border-color: rgba(244,162,97,0.4); }
+        .ans-btn.D { border-color: rgba(69,123,157,0.4); }
+        .ans-btn.correct-ans { background: rgba(82,183,136,0.3) !important; border-color: var(--green) !important; color: white !important; }
+        .ans-btn.wrong-ans { background: rgba(230,57,70,0.3) !important; border-color: var(--red) !important; color: white !important; }
+        .q-feedback { font-family: 'Fredoka One', cursive; font-size: 0.85rem; text-align: center; min-height: 20px; margin-top: 6px; }
+
+        /* ===== MULTIPLAYER PANEL ===== */
+        #mp-panel { position: fixed; left: 0; top: 56px; bottom: 0; width: 200px; background: rgba(5,3,1,0.92); border-right: 1px solid var(--border); z-index: 90; padding: 12px; overflow-y: auto; backdrop-filter: blur(8px); transition: transform 0.3s; }
+        #mp-panel.hidden { transform: translateX(-100%); }
+        .mp-title { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--gold); margin-bottom: 10px; }
+        .mp-player { display: flex; align-items: center; gap: 8px; padding: 8px 8px; border-radius: 10px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; }
+        .mp-player.you { border-color: rgba(249,199,79,0.4); }
+        .mp-player.dead { opacity: 0.4; }
+        .mp-player-info { flex: 1; min-width: 0; }
+        .mp-player-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.78rem; }
+        .mp-player-score { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: var(--gold); }
+        .mp-player-floor { font-size: 0.65rem; color: var(--fire2); }
+
+        /* ===== NOTIFICATIONS ===== */
+        #notif-wrap { position: fixed; top: 66px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
+        .notif { background: rgba(5,3,1,0.92); border-radius: 100px; padding: 6px 18px; font-family: 'Fredoka One', cursive; font-size: 0.95rem; animation: notif-in 0.3s cubic-bezier(0.34,1.56,0.64,1), notif-out 0.3s 1.7s ease-in forwards; backdrop-filter: blur(8px); white-space: nowrap; }
+        @keyframes notif-in { from { transform:scale(0.5) translateY(-20px); opacity:0; } to { transform:scale(1) translateY(0); opacity:1; } }
+        @keyframes notif-out { to { transform:scale(0.8) translateY(-10px); opacity:0; } }
+        .notif-correct { border: 1px solid var(--green); color: var(--green); }
+        .notif-wrong { border: 1px solid var(--red); color: var(--red); }
+        .notif-info { border: 1px solid var(--gold); color: var(--gold); }
+        .notif-fire { border: 1px solid var(--fire); color: var(--fire); }
+        .notif-bonus { border: 1px solid var(--purple); color: #c39bd3; }
+
+        .float-pts { position: fixed; font-family: 'Fredoka One', cursive; font-size: 1.6rem; pointer-events: none; z-index: 350; animation: float-up 1.2s ease-out forwards; }
+        @keyframes float-up { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-70px); } }
+
+        /* ===== COUNTDOWN ===== */
+        #countdown-overlay { position: fixed; inset: 0; background: rgba(5,3,1,0.85); z-index: 400; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: opacity 0.5s; }
+        #countdown-overlay.hidden { opacity: 0; pointer-events: none; }
+        #countdown-num { font-family: 'Fredoka One', cursive; font-size: 9rem; line-height: 1; animation: count-pulse 1s ease-in-out; }
+        @keyframes count-pulse { 0% { transform:scale(0.5); opacity:0; } 50% { transform:scale(1.3); opacity:1; } 100% { transform:scale(1); opacity:1; } }
+
+        /* ===== PAUSE MENU ===== */
+        #pause-menu { position: fixed; inset: 0; background: rgba(5,3,1,0.92); z-index: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+        #pause-menu.hidden { display: none; }
+        .pause-title { font-family: 'Fredoka One', cursive; font-size: 3rem; color: var(--gold); }
+
+        /* ===== RESULT SCREEN ===== */
+        #screen-result { background: var(--dark); overflow-y: auto; }
+        .result-box { max-width: 560px; width: 90%; text-align: center; padding: 20px 0 60px; }
+        .result-rank { font-family: 'Fredoka One', cursive; font-size: 5rem; }
+        .result-title { font-family: 'Fredoka One', cursive; font-size: 2rem; margin: 8px 0; }
+        .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+        .result-stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+        .result-stat-val { font-family: 'Fredoka One', cursive; font-size: 1.8rem; }
+        .result-stat-lbl { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+        .result-mp-list { margin: 16px 0; }
+        .result-mp-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); margin-bottom: 8px; }
+        .result-mp-row.winner { border-color: rgba(249,199,79,0.5); background: rgba(249,199,79,0.07); }
+        .result-rank-num { font-family: 'Fredoka One', cursive; font-size: 1.4rem; width: 32px; text-align: center; }
+        .result-player-name { flex: 1; font-weight: 800; }
+        .result-player-score { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--gold); }
+        .result-player-floor { font-size: 0.75rem; color: var(--fire2); }
+        .result-fact { background: rgba(42,157,143,0.1); border: 1px solid rgba(42,157,143,0.3); border-radius: 12px; padding: 12px 16px; font-size: 0.88rem; margin: 14px 0; color: var(--muted); text-align: left; }
+        .result-fact strong { color: var(--teal); }
+
+        /* ===== LAVA DISTANCE INDICATOR ===== */
+        #lava-distance-bar { position: fixed; bottom: 0; left: 0; right: 320px; height: 36px; background: rgba(5,3,1,0.93); border-top: 2px solid var(--fire); z-index: 100; display: none; align-items: center; padding: 0 14px; gap: 10px; backdrop-filter: blur(8px); }
+        #lava-distance-bar.visible { display: flex; }
+        #lava-dist-label { font-size: 0.65rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        #lava-dist-track { flex: 1; height: 10px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; border: 1px solid var(--border); }
+        #lava-dist-fill { height: 100%; border-radius: 5px; transition: width 0.3s, background 0.3s; }
+        #lava-dist-meters { font-family: 'Fredoka One', cursive; font-size: 1rem; color: var(--fire2); min-width: 60px; text-align: right; white-space: nowrap; }
+        #lava-dist-meters.danger { color: var(--red); animation: jump-warn 0.4s ease-in-out infinite alternate; }
+
+        /* ===== FIRE EFFECT ===== */
+        #lava-warning { position: fixed; inset: 0; pointer-events: none; z-index: 96; opacity: 0; transition: opacity 0.5s; border: 4px solid rgba(255,69,0,0.0); }
+        #lava-warning.active { opacity: 1; animation: lava-warn 0.8s ease-in-out infinite; border-color: rgba(255,69,0,0.6); }
+        @keyframes lava-warn { 0%,100% { box-shadow: inset 0 0 30px rgba(255,69,0,0.2) } 50% { box-shadow: inset 0 0 80px rgba(255,69,0,0.5) } }
+
+        #dead-overlay { position: fixed; inset: 0; background: rgba(200,10,10,0.5); z-index: 450; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); transition: opacity 0.3s; pointer-events: none; }
+        #dead-overlay.hidden { opacity: 0; }
+        .dead-text { font-family: 'Fredoka One', cursive; font-size: 4rem; color: white; text-shadow: 0 0 40px rgba(255,0,0,0.8); animation: dead-pulse 0.5s ease-in-out; }
+        @keyframes dead-pulse { 0% { transform:scale(0.5); opacity:0; } 50% { transform:scale(1.2); } 100% { transform:scale(1); } }
+
+        /* ===== TEST MODE ===== */
+        #screen-test { background: var(--dark); overflow-y: auto; }
+        .test-container { max-width: 600px; width: 90%; padding: 20px 0 60px; }
+        .test-header { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+        .test-progress-wrap { flex: 1; }
+        .test-progress-label { font-size: 0.72rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .test-progress-bar { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+        .test-progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), #52b788); border-radius: 4px; transition: width 0.3s; }
+        .test-timer { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--gold); min-width: 60px; text-align: right; }
+        .test-timer.warning { color: var(--red); animation: jump-warn 0.5s ease-in-out infinite alternate; }
+        .test-q-num { font-size: 0.75rem; font-weight: 800; color: var(--muted); margin-bottom: 4px; }
+        .test-q-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 12px; }
+        .test-q-card.answered { border-color: rgba(42,157,143,0.4); }
+        .test-q-text { font-size: 0.95rem; font-weight: 700; line-height: 1.5; color: var(--text); margin-bottom: 14px; }
+        .test-ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .test-ans-btn { background: rgba(255,255,255,0.05); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700; color: var(--text); transition: all 0.15s; text-align: left; }
+        .test-ans-btn:hover:not(:disabled) { background: rgba(255,140,0,0.12); border-color: var(--fire2); }
+        .test-ans-btn.selected { background: rgba(42,157,143,0.25) !important; border-color: var(--teal) !important; color: white !important; }
+        .test-ans-btn:disabled { cursor: default; }
+        .test-diff-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 100px; text-transform: uppercase; margin-bottom: 8px; }
+        #screen-test-result { background: var(--dark); overflow-y: auto; }
+        .test-result-box { max-width: 560px; width: 90%; text-align: center; padding: 24px 0 60px; }
+        .test-score-circle { width: 140px; height: 140px; border-radius: 50%; border: 6px solid var(--teal); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; background: rgba(42,157,143,0.1); }
+        .test-score-val { font-family: 'Fredoka One', cursive; font-size: 2.8rem; color: var(--teal); line-height: 1; }
+        .test-score-max { font-size: 0.85rem; color: var(--muted); font-weight: 800; }
+        .test-grade { font-family: 'Fredoka One', cursive; font-size: 2rem; margin: 8px 0; }
+        .test-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 16px 0; }
+        .test-stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+        .test-stat-val { font-family: 'Fredoka One', cursive; font-size: 1.5rem; }
+        .test-stat-lbl { font-size: 0.68rem; color: var(--muted); font-weight: 800; text-transform: uppercase; margin-top: 2px; }
+
+        /* ===== LOADING ===== */
+        #loading-screen { position: fixed; inset: 0; background: var(--dark); z-index: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity 0.4s; }
+        #loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--fire); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--muted); }
+
+        /* ===== MOBILE CONTROLS ===== */
+        #mobile-controls { position: fixed; bottom: 20px; left: 0; right: 0; z-index: 150; display: none; justify-content: space-between; padding: 0 16px; pointer-events: none; }
+        .touch-group { display: flex; gap: 8px; pointer-events: all; }
+        .touch-btn { width: 54px; height: 54px; border-radius: 50%; background: rgba(255,140,0,0.15); border: 2px solid rgba(255,140,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Fredoka One', cursive; color: var(--fire2); }
+        .touch-btn:active { background: rgba(255,140,0,0.35); }
+        @media (max-width: 768px) { #mobile-controls { display: flex; } #game-area { right: 0; } #quiz-panel { display: none; } }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        #copy-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(82,183,136,0.9); color: white; font-family: 'Fredoka One', cursive; padding: 8px 20px; border-radius: 100px; z-index: 700; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        #copy-toast.show { opacity: 1; }
+
+        /* Jump points indicator - prominent */
+        .jump-points-indicator { display: flex; flex-direction: column; align-items: center; }
+        #jump-pts-val { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: var(--teal); line-height: 1; }
+        #jump-pts-val.low { color: var(--red); animation: jump-warn 0.5s ease-in-out infinite alternate; }
+        #jump-pts-val.zero { color: #666; }
+    </style>
+</head>
+<body>
+
+<!-- ===== TITLE SCREEN ===== -->
+<div class="screen" id="screen-title">
+    <canvas id="title-bg" style="position:absolute;inset:0;pointer-events:none;"></canvas>
+    <div style="text-align:center; position:relative; z-index:1;">
+        <div class="fire-icon">🔥</div>
+        <h1 class="title-logo">Menara Kayu Berapi</h1>
+        <p style="font-family:'Fredoka One',cursive; font-size:1.3rem; color:var(--fire2); position:relative; z-index:1; margin-top:-4px; margin-bottom:8px;">Kuis Pancasila · Platformer Survival</p>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:24px;">Panjat menara, jawab soal, jangan sampai terlahap api! 🔥</p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:24px;">
+            <button class="btn" onclick="showLobby('singleplayer')">🎮 Singleplayer</button>
+            <button class="btn btn-gold" onclick="showLobby('host')">👑 Host Multiplayer</button>
+            <button class="btn btn-teal" onclick="showLobby('join')">🔗 Join Game</button>
+        </div>
+        <div style="margin-top:12px;">
+            <button class="btn" style="background:linear-gradient(135deg,#48cae4,#0077b6); box-shadow:0 4px 20px rgba(72,202,228,0.4);" onclick="startTestMode()">📝 Mode Tes Pengetahuan</button>
+        </div>
+        <div style="display:flex; gap:24px; justify-content:center; margin-top:28px; flex-wrap:wrap;">
+            <div style="text-align:center; color:var(--muted); font-size:0.82rem;"><div style="font-size:1.6rem;">🏆</div>Singleplayer Endless</div>
+            <div style="text-align:center; color:var(--muted); font-size:0.82rem;"><div style="font-size:1.6rem;">🎮</div>Online Multiplayer</div>
+            <div style="text-align:center; color:var(--muted); font-size:0.82rem;"><div style="font-size:1.6rem;">📝</div>Mode Tes 20 Soal</div>
+            <div style="text-align:center; color:var(--muted); font-size:0.82rem;"><div style="font-size:1.6rem;">🎁</div>Bonus &amp; Power-up</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SINGLEPLAYER SETUP ===== -->
+<div class="screen hidden" id="screen-sp-setup" style="overflow-y:auto; padding:20px;">
+    <div style="max-width:440px; width:100%; padding:20px 0 60px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+            <button class="btn btn-ghost btn-xs" onclick="showScreen('screen-title')">← Kembali</button>
+            <div style="font-family:'Fredoka One',cursive; font-size:1.6rem; color:var(--gold);">🎮 Singleplayer</div>
+        </div>
+        <div class="lobby-card" style="max-width:100%;">
+            <div class="input-label">Nama Pemain</div>
+            <input class="input-field" id="sp-name" type="text" maxlength="16" value="PelajarHebat" placeholder="Namamu...">
+            <div class="input-label">Pilih Avatar</div>
+            <div class="avatar-row" id="sp-avatar-row"></div>
+            <div class="input-label">Tingkat Kesulitan Api 🔥</div>
+            <div class="diff-row">
+                <div class="diff-btn active" id="sp-diff-easy" onclick="setSPDiff('easy')">😊 Mudah<br><small style="font-weight:400;font-size:0.7rem;">Api lambat</small></div>
+                <div class="diff-btn" id="sp-diff-medium" onclick="setSPDiff('medium')">⚡ Sedang<br><small style="font-weight:400;font-size:0.7rem;">Api normal</small></div>
+                <div class="diff-btn" id="sp-diff-hard" onclick="setSPDiff('hard')">💀 Sulit<br><small style="font-weight:400;font-size:0.7rem;">Api cepat</small></div>
+            </div>
+            <div class="input-label">Kesulitan Soal</div>
+            <div class="diff-row">
+                <div class="diff-btn" id="sp-qdiff-easy" onclick="setSPQDiff('easy')">😊 Mudah</div>
+                <div class="diff-btn active" id="sp-qdiff-mixed" onclick="setSPQDiff('mixed')">🎯 Campuran</div>
+                <div class="diff-btn" id="sp-qdiff-hard" onclick="setSPQDiff('hard')">💀 Sulit</div>
+            </div>
+            <button class="btn" style="width:100%; margin-top:20px; font-size:1.1rem; padding:15px;" onclick="startSingleplayer()">🔥 Mulai Bermain!</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HOST LOBBY ===== -->
+<div class="screen hidden" id="screen-host">
+    <div class="lobby-card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+            <button class="btn btn-ghost btn-xs" onclick="leaveHost()">← Kembali</button>
+            <div class="lobby-title" style="margin-bottom:0; text-align:left;">👑 Host Game</div>
+        </div>
+        <div class="lobby-sub">Bagikan kode ini ke temanmu!</div>
+        <div class="room-code-display" id="host-room-code" onclick="copyRoomCode()" title="Klik untuk copy" style="cursor:pointer;">????</div>
+        <div style="text-align:center; font-size:0.75rem; color:var(--muted); margin-top:-8px; margin-bottom:12px;">🔒 Klik kode untuk copy</div>
+        <div class="input-label">Nama Kamu</div>
+        <input class="input-field" id="host-name" type="text" maxlength="16" value="Host" placeholder="Namamu...">
+        <div class="input-label">Pilih Avatar</div>
+        <div class="avatar-row" id="host-avatar-row"></div>
+        <div class="input-label">Kecepatan Api (Tingkat Kesulitan)</div>
+        <div class="diff-row">
+            <div class="diff-btn active" id="host-diff-easy" onclick="setHostDiff('easy')">😊 Mudah</div>
+            <div class="diff-btn" id="host-diff-medium" onclick="setHostDiff('medium')">⚡ Sedang</div>
+            <div class="diff-btn" id="host-diff-hard" onclick="setHostDiff('hard')">💀 Sulit</div>
+        </div>
+        <div class="input-label">Kesulitan Soal</div>
+        <div class="diff-row">
+            <div class="diff-btn" id="host-qdiff-easy" onclick="setHostQDiff('easy')">😊 Mudah</div>
+            <div class="diff-btn active" id="host-qdiff-mixed" onclick="setHostQDiff('mixed')">🎯 Campuran</div>
+            <div class="diff-btn" id="host-qdiff-hard" onclick="setHostQDiff('hard')">💀 Sulit</div>
+        </div>
+        <div class="input-label" style="margin-top:12px;">Pemain <span id="host-player-count">(1)</span></div>
+        <div class="player-list" id="host-player-list"></div>
+        <div class="waiting-dots"><div class="waiting-dot"></div><div class="waiting-dot"></div><div class="waiting-dot"></div></div>
+        <div style="text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:12px;">Menunggu pemain bergabung...</div>
+        <button class="btn" style="width:100%;" onclick="hostStartGame()" id="btn-host-start">🚀 Mulai Game!</button>
+    </div>
+</div>
+
+<!-- ===== JOIN LOBBY ===== -->
+<div class="screen hidden" id="screen-join">
+    <div class="lobby-card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+            <button class="btn btn-ghost btn-xs" onclick="showScreen('screen-title')">← Kembali</button>
+            <div class="lobby-title" style="margin-bottom:0; text-align:left;">🔗 Bergabung</div>
+        </div>
+        <div class="lobby-sub">Masukkan kode room dari host</div>
+        <div class="input-label">Kode Room (6 karakter)</div>
+        <input class="input-field" id="join-code" type="text" maxlength="6" placeholder="Contoh: AB1234" style="text-align:center; font-family:'Fredoka One',cursive; font-size:2rem; letter-spacing:6px; text-transform:uppercase;">
+        <div class="input-label">Nama Kamu</div>
+        <input class="input-field" id="join-name" type="text" maxlength="16" value="Pemain" placeholder="Namamu...">
+        <div class="input-label">Pilih Avatar</div>
+        <div class="avatar-row" id="join-avatar-row"></div>
+        <button class="btn btn-teal" style="width:100%; margin-top:16px;" onclick="joinRoom()">🔗 Bergabung!</button>
+        <div id="join-error" style="color:var(--red); font-size:0.85rem; text-align:center; margin-top:10px; min-height:20px;"></div>
+    </div>
+</div>
+
+<!-- ===== WAITING ===== -->
+<div class="screen hidden" id="screen-waiting">
+    <div class="lobby-card" style="text-align:center;">
+        <div class="lobby-title">⏳ Menunggu Host</div>
+        <div class="lobby-sub">Bersiaplah! Host akan segera memulai game.</div>
+        <div class="room-code-display" id="waiting-code" style="font-size:2.5rem;">????</div>
+        <div class="input-label" style="margin-top:12px;">Pemain dalam room</div>
+        <div class="player-list" id="waiting-player-list"></div>
+        <div class="waiting-dots" style="margin-top:16px;"><div class="waiting-dot"></div><div class="waiting-dot"></div><div class="waiting-dot"></div></div>
+        <div style="color:var(--muted); font-size:0.9rem;">Host yang akan memulai game...</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:16px;" onclick="leaveRoom()">⬅ Keluar Room</button>
+    </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div class="screen hidden" id="screen-game" style="padding:0; justify-content:flex-start;">
+    <div id="game-area"><canvas id="game-canvas"></canvas></div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div class="screen hidden" id="screen-result">
+    <div class="result-box">
+        <div id="result-rank" class="result-rank">🔥</div>
+        <div class="result-title" id="result-title">Game Over!</div>
+        <div id="result-stats" class="result-stats"></div>
+        <div id="result-mp" class="result-mp-list"></div>
+        <div class="result-fact" id="result-fact"></div>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:16px;">
+            <button class="btn btn-gold" id="btn-result-replay" onclick="">🔁 Main Lagi</button>
+            <button class="btn btn-outline btn-sm" onclick="showScreen('screen-title')">🏠 Menu Utama</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HUD ===== -->
+<div id="hud" class="hidden">
+    <div class="hud-item">
+        <div class="hud-label">Skor</div>
+        <div class="hud-val" id="hud-score">0</div>
+    </div>
+    <div class="hud-div"></div>
+    <div class="hud-item">
+        <div class="hud-label">Lantai</div>
+        <div class="hud-val" id="hud-floor">1</div>
+    </div>
+    <div class="hud-div"></div>
+    <div class="hud-item">
+        <div class="hud-label">Nyawa</div>
+        <div id="hud-lives"></div>
+    </div>
+    <div class="hud-div"></div>
+    <!-- JUMP POINTS - NEW INDICATOR -->
+    <div class="hud-item" title="Poin Lompatan — diperlukan untuk melompat!">
+        <div class="hud-label">⬆ Lompatan</div>
+        <div id="jump-pts-val">5</div>
+        <div id="hud-jumps-bar"><div id="hud-jumps-fill" style="width:100%"></div></div>
+    </div>
+    <div class="hud-div"></div>
+    <div class="hud-item">
+        <div class="hud-label">Soal</div>
+        <div id="hud-slots" style="display:flex; gap:4px;">
+            <div class="q-slot empty" id="slot-0">—</div>
+            <div class="q-slot empty" id="slot-1">—</div>
+            <div class="q-slot empty" id="slot-2">—</div>
+        </div>
+    </div>
+    <div id="hud-bonus">⭐ Bonus Aktif!</div>
+    <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
+        <div id="hud-player-name" style="font-size:0.85rem; font-weight:800; color:var(--muted); max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+        <div style="cursor:pointer; font-size:1.3rem;" onclick="togglePause()" title="Pause (P)">⏸️</div>
+    </div>
+</div>
+
+<div id="lava-warning"></div>
+<div id="lava-distance-bar">
+    <div id="lava-dist-label">🔥 Jarak Lava</div>
+    <div id="lava-dist-track"><div id="lava-dist-fill"></div></div>
+    <div id="lava-dist-meters">-- m</div>
+</div>
+<div id="dead-overlay" class="hidden"><div class="dead-text">💀 KENA API!</div></div>
+
+<!-- QUIZ PANEL -->
+<div id="quiz-panel" class="hidden">
+    <div class="qp-title">📚 Soal Aktif <span id="qp-count">(0/3)</span></div>
+    <div style="font-size:0.72rem; color:var(--muted); margin-bottom:6px;">Jawab soal = dapat poin lompatan!</div>
+    <div id="quiz-slots-container"></div>
+</div>
+
+<!-- MULTIPLAYER PANEL -->
+<div id="mp-panel" class="hidden">
+    <div class="mp-title">🏆 Pemain</div>
+    <div id="mp-list"></div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div id="notif-wrap"></div>
+
+<!-- COUNTDOWN -->
+<div id="countdown-overlay" class="hidden">
+    <div id="countdown-num" style="color:var(--gold);">3</div>
+    <div id="countdown-label" style="font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--muted); margin-top:8px;"></div>
+</div>
+
+<!-- PAUSE MENU -->
+<div id="pause-menu" class="hidden">
+    <div class="pause-title">⏸ Dijeda</div>
+    <button class="btn btn-gold" onclick="togglePause()">▶ Lanjutkan</button>
+    <button class="btn btn-outline btn-sm" onclick="togglePause(); showTutorial()">📖 Cara Main</button>
+    <button class="btn btn-danger btn-sm" onclick="endGame(true)">🏠 Keluar Game</button>
+</div>
+
+<!-- TUTORIAL -->
+<div id="tutorial-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;display:none;align-items:center;justify-content:center;" class="hidden">
+    <div style="background:var(--card);border:2px solid var(--fire);border-radius:20px;padding:28px;max-width:460px;width:90%;">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--fire2);margin-bottom:16px;">📖 Cara Bermain</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:0.88rem;color:var(--muted);line-height:1.5;">
+            <div>🏃 <strong style="color:var(--text);">Bergerak:</strong> ← → / A D — bergerak, ↑ / Spasi — lompat</div>
+            <div>⬆ <strong style="color:var(--text);">Poin Lompatan:</strong> Mulai dengan 5 poin. Setiap lompatan -1 poin. Poin = 0? Tidak bisa lompat!</div>
+            <div>📚 <strong style="color:var(--text);">Jawab Soal:</strong> Mudah=+1🦘, Sedang=+2🦘, Sulit=+3🦘 poin lompatan</div>
+            <div>🎁 <strong style="color:var(--text);">Bonus:</strong> Ambil item di lantai untuk poin lompatan dan keuntungan lain!</div>
+            <div>🔥 <strong style="color:var(--text);">Lava:</strong> Api naik dari bawah — jangan sampai tertangkap!</div>
+            <div>🕳️ <strong style="color:var(--text);">Lubang:</strong> Makin tinggi = makin banyak dan lebar lubangnya!</div>
+            <div>❤️ <strong style="color:var(--text);">Nyawa:</strong> 3 nyawa. Kena api = -1 nyawa.</div>
+            <div style="color:var(--gold); background:rgba(249,199,79,0.1); border-radius:8px; padding:8px;">
+                🏆 <strong>Singleplayer:</strong> Endless mode, cetak skor setinggi mungkin!<br>
+                👥 <strong>Multiplayer:</strong> Pemain terakhir yang bertahan = pemenang!
+            </div>
+        </div>
+        <button class="btn btn-teal" style="width:100%;margin-top:16px;" onclick="closeTutorial()">✓ Mengerti!</button>
+    </div>
+</div>
+
+<!-- MOBILE CONTROLS -->
+<div id="mobile-controls">
+    <div class="touch-group">
+        <div class="touch-btn" ontouchstart="touchStart('left')" ontouchend="touchEnd('left')">◀</div>
+        <div class="touch-btn" ontouchstart="touchStart('right')" ontouchend="touchEnd('right')">▶</div>
+    </div>
+    <div class="touch-group">
+        <div class="touch-btn" ontouchstart="touchStart('jump')" ontouchend="touchEnd('jump')">↑</div>
+    </div>
+</div>
+
+<!-- ===== TEST MODE SCREEN ===== -->
+<div class="screen hidden" id="screen-test" style="padding:0; justify-content:flex-start; align-items:center;">
+    <div class="test-container">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+            <button class="btn btn-ghost btn-xs" onclick="exitTestMode()">← Keluar</button>
+            <div style="font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--teal);">📝 Tes Pengetahuan</div>
+        </div>
+        <div class="test-header">
+            <div class="test-progress-wrap">
+                <div class="test-progress-label">Progres: <span id="test-progress-txt">0/20</span></div>
+                <div class="test-progress-bar"><div class="test-progress-fill" id="test-progress-fill" style="width:0%"></div></div>
+            </div>
+            <div class="test-timer" id="test-timer">10:00</div>
+        </div>
+        <div id="test-questions-container"></div>
+        <button class="btn btn-teal" style="width:100%; margin-top:8px; font-size:1.05rem; padding:14px;" onclick="submitTest()">✓ Selesai & Lihat Hasil</button>
+    </div>
+</div>
+
+<!-- ===== TEST RESULT SCREEN ===== -->
+<div class="screen hidden" id="screen-test-result">
+    <div class="test-result-box">
+        <div id="test-result-grade-icon" style="font-size:3.5rem; margin-bottom:8px;">📝</div>
+        <div class="test-grade" id="test-result-grade">Selesai!</div>
+        <div class="test-score-circle">
+            <div class="test-score-val" id="test-result-score">0</div>
+            <div class="test-score-max">dari 20</div>
+        </div>
+        <div class="test-stat-row" id="test-result-stats"></div>
+        <div class="result-fact" id="test-result-fact" style="margin:14px 0;"></div>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn" style="background:linear-gradient(135deg,#48cae4,#0077b6);" onclick="startTestMode()">🔁 Tes Ulang</button>
+            <button class="btn btn-outline btn-sm" onclick="showScreen('screen-title')">🏠 Menu Utama</button>
+        </div>
+    </div>
+</div>
+
+<div id="loading-screen" class="hidden">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Menghubungkan...</div>
+</div>
+
+<div id="copy-toast">✓ Kode disalin!</div>
+
+<script>
+// ============================================================
+// MENARA KAYU BERAPI — FIXED VERSION
+// Perbaikan 1: Platform sistem auto-generated proper
+// Perbaikan 2: Jump points system (5 awal, -1 per lompat)
+// Perbaikan 3: Poin soal: easy=1, medium=2, hard=3
+// Perbaikan 4: Background kayu hangat, bukan gelap berapi
+// ============================================================
+
+// ===== QUESTION BANK =====
+const QUESTIONS = [
+    { id:'S1-01', sila:1, text:'Simbol sila ke-1 Pancasila adalah...', opts:['Rantai','Bintang Emas','Pohon Beringin','Banteng'], correct:1, diff:'easy' },
+    { id:'S1-02', sila:1, text:'Sikap yang mencerminkan sila pertama Pancasila adalah...', opts:['Memaksakan agama','Menghormati pemeluk agama lain','Ikut ibadah agama lain','Tidak beragama'], correct:1, diff:'easy' },
+    { id:'S1-03', sila:1, text:'Berapa agama yang diakui resmi di Indonesia?', opts:['4','5','6','7'], correct:2, diff:'medium' },
+    { id:'S1-04', sila:1, text:'Toleransi beragama diatur dalam UUD 1945 pasal...', opts:['Pasal 27 ayat 1','Pasal 29 ayat 2','Pasal 31 ayat 1','Pasal 33 ayat 3'], correct:1, diff:'hard' },
+    { id:'S1-05', sila:1, text:'Bunyi sila ke-1 Pancasila adalah...', opts:['Kemanusiaan yang Adil','Ketuhanan Yang Maha Esa','Persatuan Indonesia','Keadilan Sosial'], correct:1, diff:'easy' },
+    { id:'S2-01', sila:2, text:'Lambang sila ke-2 Pancasila adalah...', opts:['Bintang','Rantai Emas','Pohon Beringin','Banteng'], correct:1, diff:'easy' },
+    { id:'S2-02', sila:2, text:'Bunyi sila ke-2 Pancasila adalah...', opts:['Ketuhanan Yang Maha Esa','Kemanusiaan yang Adil dan Beradab','Persatuan Indonesia','Kerakyatan'], correct:1, diff:'easy' },
+    { id:'S2-03', sila:2, text:'Contoh penerapan sila ke-2 adalah...', opts:['Mengutamakan diri sendiri','Menolong orang yang membutuhkan','Memaksakan kehendak','Tidak mau bekerjasama'], correct:1, diff:'easy' },
+    { id:'S2-04', sila:2, text:'Mata rantai pada lambang sila ke-2 berbentuk...', opts:['Semua bulat','Semua persegi','Kotak dan bulat silih berganti','Berbentuk bintang'], correct:2, diff:'medium' },
+    { id:'S2-05', sila:2, text:'Nilai yang ditekankan sila ke-2 adalah...', opts:['Persatuan','Keadilan sosial','Pengakuan hak asasi manusia','Musyawarah'], correct:2, diff:'medium' },
+    { id:'S3-01', sila:3, text:'Simbol sila ke-3 Pancasila adalah...', opts:['Bintang','Rantai','Pohon Beringin','Banteng'], correct:2, diff:'easy' },
+    { id:'S3-02', sila:3, text:'Bunyi sila ke-3 Pancasila adalah...', opts:['Kemanusiaan yang Adil','Persatuan Indonesia','Ketuhanan Yang Maha Esa','Keadilan Sosial'], correct:1, diff:'easy' },
+    { id:'S3-03', sila:3, text:'Semboyan nasional Indonesia yang mencerminkan sila ke-3 adalah...', opts:['Merdeka atau Mati','Bhinneka Tunggal Ika','Pancasila Sakti','Bersatu Kita Teguh'], correct:1, diff:'easy' },
+    { id:'S3-04', sila:3, text:'Pohon Beringin melambangkan...', opts:['Kekuatan alam','Persatuan dan kesatuan bangsa','Keadilan rakyat','Ketuhanan bangsa'], correct:1, diff:'medium' },
+    { id:'S3-05', sila:3, text:'Contoh sikap yang mencerminkan sila ke-3 adalah...', opts:['Mendiskriminasi teman','Bangga memakai produk impor','Menjaga persatuan dan kerukunan','Meremehkan budaya lokal'], correct:2, diff:'easy' },
+    { id:'S4-01', sila:4, text:'Simbol sila ke-4 Pancasila adalah...', opts:['Banteng','Padi dan Kapas','Bintang','Rantai'], correct:0, diff:'easy' },
+    { id:'S4-02', sila:4, text:'Musyawarah dilakukan untuk mencapai...', opts:['Keuntungan pribadi','Mufakat bersama','Kemenangan satu pihak','Keputusan pemimpin saja'], correct:1, diff:'easy' },
+    { id:'S4-03', sila:4, text:'Kata pertama sila ke-4 Pancasila adalah...', opts:['Ketuhanan','Kemanusiaan','Persatuan','Kerakyatan'], correct:3, diff:'easy' },
+    { id:'S4-04', sila:4, text:'Kepala Banteng melambangkan...', opts:['Kekuatan fisik','Semangat musyawarah/kerakyatan','Keadilan untuk semua','Persatuan nasional'], correct:1, diff:'medium' },
+    { id:'S4-05', sila:4, text:'Prinsip musyawarah dalam demokrasi Pancasila adalah...', opts:['Suara mayoritas selalu menang','Pemimpin memutuskan sendiri','Mencari mufakat demi kepentingan bersama','Memaksakan kehendak'], correct:2, diff:'hard' },
+    { id:'S5-01', sila:5, text:'Simbol sila ke-5 Pancasila adalah...', opts:['Bintang','Banteng','Padi dan Kapas','Pohon Beringin'], correct:2, diff:'easy' },
+    { id:'S5-02', sila:5, text:'Bunyi sila ke-5 Pancasila adalah...', opts:['Persatuan Indonesia','Keadilan Sosial bagi Seluruh Rakyat Indonesia','Kemanusiaan yang Adil','Kerakyatan yang dipimpin Hikmat'], correct:1, diff:'easy' },
+    { id:'S5-03', sila:5, text:'Contoh penerapan sila ke-5 di sekolah adalah...', opts:['Mendiskriminasi teman','Memberikan kesempatan belajar yang sama','Hanya menolong kelompok sendiri','Tidak peduli pada teman kesulitan'], correct:1, diff:'easy' },
+    { id:'S5-04', sila:5, text:'Padi melambangkan pangan, kapas melambangkan...', opts:['Sandang/pakaian','Papan/tempat tinggal','Air','Udara'], correct:0, diff:'medium' },
+    { id:'U-01', sila:0, text:'Pancasila pertama kali diusulkan Ir. Soekarno pada...', opts:['17 Agustus 1945','1 Juni 1945','22 Juni 1945','18 Agustus 1945'], correct:1, diff:'easy' },
+    { id:'U-02', sila:0, text:'BPUPKI singkatan dari...', opts:['Badan Pembinaan Usaha Kemerdekaan Indonesia','Badan Penyelidik Usaha-usaha Persiapan Kemerdekaan Indonesia','Badan Perencanaan Undang-undang Persiapan','Badan Pemuda Utama Perjuang Kemerdekaan'], correct:1, diff:'medium' },
+    { id:'U-03', sila:0, text:'Pancasila terdiri dari berapa sila?', opts:['3','4','5','6'], correct:2, diff:'easy' },
+    { id:'U-04', sila:0, text:'Urutan sila: Ketuhanan → Kemanusiaan → Persatuan → Kerakyatan → ...', opts:['Kesetaraan','Keadilan Sosial','Kemerdekaan','Keamanan'], correct:1, diff:'easy' },
+    { id:'U-05', sila:0, text:'Jumlah bulu ekor Burung Garuda Pancasila adalah...', opts:['7','8','17','45'], correct:1, diff:'hard' },
+    { id:'U-06', sila:0, text:'Jumlah bulu di setiap sayap Burung Garuda adalah...', opts:['15','16','17','18'], correct:2, diff:'hard' },
+    { id:'U-07', sila:0, text:'Piagam Jakarta ditandatangani pada...', opts:['1 Juni 1945','22 Juni 1945','17 Agustus 1945','18 Agustus 1945'], correct:1, diff:'hard' },
+    { id:'U-08', sila:0, text:'Tanggal 1 Juni diperingati sebagai...', opts:['Hari Kemerdekaan','Hari Pahlawan','Hari Lahir Pancasila','Hari Kebangkitan Nasional'], correct:2, diff:'easy' },
+    { id:'U-09', sila:0, text:'Pancasila ditetapkan resmi sebagai dasar negara pada...', opts:['1 Juni 1945','17 Agustus 1945','18 Agustus 1945','22 Juni 1945'], correct:2, diff:'medium' },
+    { id:'U-10', sila:0, text:'Garuda Pancasila memegang pita bertuliskan...', opts:['Indonesia Raya','Pancasila Sakti','Bhinneka Tunggal Ika','Merdeka atau Mati'], correct:2, diff:'easy' },
+    { id:'U-11', sila:0, text:'Pancasila sebagai dasar negara berarti...', opts:['Pedoman hidup pribadi','Landasan penyelenggaraan negara','Aturan adat istiadat','Undang-undang tertinggi saja'], correct:1, diff:'medium' },
+    { id:'U-12', sila:0, text:'Nilai-nilai Pancasila bersumber dari...', opts:['Budaya asing','Kepribadian dan budaya bangsa Indonesia','Kitab suci satu agama','Pemerintah kolonial'], correct:1, diff:'medium' },
+    { id:'U-13', sila:0, text:'Bulu leher Garuda berjumlah...', opts:['17','19','43','45'], correct:1, diff:'hard' },
+    { id:'U-14', sila:0, text:'Pembukaan UUD 1945 alinea ke-4 memuat...', opts:['Sejarah perjuangan','Rumusan tujuan negara dan Pancasila','Hak warga negara','Bentuk pemerintahan'], correct:1, diff:'hard' },
+    { id:'U-15', sila:0, text:'Hari Kesaktian Pancasila diperingati setiap...', opts:['17 Agustus','1 Juni','1 Oktober','28 Oktober'], correct:2, diff:'medium' },
+
+    // ===== 30 SOAL TAMBAHAN =====
+    // MUDAH (15 soal)
+    { id:'N1-01', sila:1, text:'Manakah sikap yang TIDAK sesuai sila ke-1 Pancasila?', opts:['Berdoa sebelum makan','Menghargai hari raya agama lain','Memaksakan keyakinan pada orang lain','Menjalankan ibadah dengan tertib'], correct:2, diff:'easy' },
+    { id:'N2-01', sila:2, text:'Sila ke-2 mengajarkan kita untuk...', opts:['Mengutamakan kepentingan sendiri','Menghargai hak dan martabat setiap manusia','Mengikuti aturan partai','Hanya menolong keluarga sendiri'], correct:1, diff:'easy' },
+    { id:'N3-01', sila:3, text:'Warna bendera Indonesia adalah...', opts:['Biru dan putih','Merah dan putih','Merah dan kuning','Hijau dan putih'], correct:1, diff:'easy' },
+    { id:'N4-01', sila:4, text:'Dalam musyawarah, kita harus mengutamakan...', opts:['Kepentingan kelompok sendiri','Keputusan ketua saja','Kepentingan bersama','Suara paling keras'], correct:2, diff:'easy' },
+    { id:'N5-01', sila:5, text:'Contoh keadilan sosial di sekolah adalah...', opts:['Memberi nilai tinggi hanya untuk anak pintar','Semua murid mendapat hak belajar yang sama','Hanya murid kaya boleh ikut ekskul','Guru pilih kasih'], correct:1, diff:'easy' },
+    { id:'N0-01', sila:0, text:'Lagu kebangsaan Indonesia adalah...', opts:['Bagimu Negeri','Indonesia Pusaka','Indonesia Raya','Garuda Pancasila'], correct:2, diff:'easy' },
+    { id:'N0-02', sila:0, text:'Ibu kota negara Indonesia adalah...', opts:['Surabaya','Bandung','Jakarta','Yogyakarta'], correct:2, diff:'easy' },
+    { id:'N0-03', sila:0, text:'Jumlah provinsi di Indonesia (per 2022) adalah...', opts:['33','34','37','38'], correct:3, diff:'easy' },
+    { id:'N0-04', sila:0, text:'Bahasa resmi/nasional Indonesia adalah...', opts:['Bahasa Jawa','Bahasa Melayu','Bahasa Indonesia','Bahasa Sunda'], correct:2, diff:'easy' },
+    { id:'N0-05', sila:0, text:'Proklamasi kemerdekaan Indonesia dibacakan oleh...', opts:['Moh. Hatta','Ir. Soekarno','Sutan Sjahrir','Moh. Yamin'], correct:1, diff:'easy' },
+    { id:'N0-06', sila:0, text:'Indonesia merdeka pada tanggal...', opts:['17 Agustus 1945','1 Juni 1945','18 Agustus 1945','20 Mei 1908'], correct:0, diff:'easy' },
+    { id:'N1-02', sila:1, text:'Menghormati teman yang sedang beribadah adalah contoh sikap...', opts:['Sila ke-2','Sila ke-1','Sila ke-3','Sila ke-5'], correct:1, diff:'easy' },
+    { id:'N3-02', sila:3, text:'Hari Sumpah Pemuda diperingati setiap...', opts:['20 Mei','17 Agustus','28 Oktober','10 November'], correct:2, diff:'easy' },
+    { id:'N4-02', sila:4, text:'Pemilihan ketua kelas yang dilakukan dengan voting adalah contoh...', opts:['Sila ke-2','Sila ke-3','Sila ke-4','Sila ke-5'], correct:2, diff:'easy' },
+    { id:'N5-02', sila:5, text:'Padi dan kapas pada lambang sila ke-5 melambangkan...', opts:['Kekayaan alam','Kebutuhan sandang dan pangan rakyat','Pertanian Indonesia','Kemakmuran raja'], correct:1, diff:'easy' },
+
+    // SEDANG (10 soal)
+    { id:'N0-07', sila:0, text:'PPKI (panitia yang mengesahkan UUD 1945) diketuai oleh...', opts:['Moh. Hatta','Ir. Soekarno','Radjiman Wediodiningrat','Ahmad Soebardjo'], correct:1, diff:'medium' },
+    { id:'N0-08', sila:0, text:'Hari Kebangkitan Nasional diperingati setiap...', opts:['17 Agustus','20 Mei','1 Juni','28 Oktober'], correct:1, diff:'medium' },
+    { id:'N2-02', sila:2, text:'Deklarasi Universal Hak Asasi Manusia disahkan PBB pada tahun...', opts:['1945','1948','1950','1955'], correct:1, diff:'medium' },
+    { id:'N3-03', sila:3, text:'Sumpah Pemuda 1928 menegaskan bahwa pemuda Indonesia bertumpah darah satu, berbangsa satu, dan menjunjung bahasa satu. Ini adalah perwujudan sila ke...', opts:['1','2','3','4'], correct:2, diff:'medium' },
+    { id:'N4-03', sila:4, text:'Sistem pemerintahan Indonesia berdasarkan sila ke-4 disebut...', opts:['Monarki','Oligarki','Demokrasi Pancasila','Teokrasi'], correct:2, diff:'medium' },
+    { id:'N5-03', sila:5, text:'Program pemerintah yang memberikan bantuan sosial kepada masyarakat miskin mencerminkan sila ke...', opts:['2','3','4','5'], correct:3, diff:'medium' },
+    { id:'N0-09', sila:0, text:'Semboyan "Bhinneka Tunggal Ika" berasal dari kitab...', opts:['Negarakertagama','Sutasoma','Pararaton','Arjunawiwaha'], correct:1, diff:'medium' },
+    { id:'N1-03', sila:1, text:'Indonesia adalah negara beragama, bukan negara agama. Hal ini diatur dalam UUD 1945 pasal 29 ayat...', opts:['1','2','3','4'], correct:0, diff:'medium' },
+    { id:'N0-10', sila:0, text:'Garuda Pancasila sebagai lambang negara diatur dalam UUD 1945 pasal...', opts:['35','36','36A','37'], correct:2, diff:'medium' },
+    { id:'N2-03', sila:2, text:'Hak untuk mendapatkan pendidikan dasar diatur dalam UUD 1945 pasal...', opts:['27 ayat 1','28A','31 ayat 1','33 ayat 1'], correct:2, diff:'medium' },
+
+    // SULIT (5 soal)
+    { id:'N0-11', sila:0, text:'Rumusan Pancasila yang sah dan final terdapat dalam...', opts:['Piagam Jakarta','Pembukaan UUD 1945 alinea ke-4','Dekrit Presiden 5 Juli 1959','Batang Tubuh UUD 1945'], correct:1, diff:'hard' },
+    { id:'N0-12', sila:0, text:'Jumlah bulu pada pangkal ekor (perisai) Garuda Pancasila adalah...', opts:['17','19','45','62'], correct:2, diff:'hard' },
+    { id:'N4-04', sila:4, text:'Sidang BPUPKI pertama membahas dasar negara, sedangkan sidang kedua membahas...', opts:['Sistem ekonomi','Rancangan UUD dan wilayah negara','Sistem militer','Hubungan luar negeri'], correct:1, diff:'hard' },
+    { id:'N0-13', sila:0, text:'Tokoh yang pertama kali mengusulkan nama "Pancasila" untuk dasar negara adalah...', opts:['Moh. Yamin','Soepomo','Ir. Soekarno','Moh. Hatta'], correct:2, diff:'hard' },
+    { id:'N5-04', sila:5, text:'Pasal UUD 1945 yang menyatakan bahwa "Fakir miskin dan anak-anak terlantar dipelihara oleh negara" adalah pasal...', opts:['27 ayat 2','31 ayat 1','34 ayat 1','33 ayat 3'], correct:2, diff:'hard' },
+];
+
+// ===== AVATARS =====
+const AVATARS = [
+    { id:0, name:'Pelajar', color:'#e63946', emoji:'🧑‍🎓', svgBody:`<rect x="24" y="55" width="32" height="40" rx="6" fill="#e63946"/><circle cx="40" cy="36" r="22" fill="#f4a261"/><ellipse cx="33" cy="34" rx="4" ry="5" fill="#1d3557"/><ellipse cx="47" cy="34" rx="4" ry="5" fill="#1d3557"/><circle cx="34" cy="33" r="1.5" fill="white"/><circle cx="48" cy="33" r="1.5" fill="white"/><path d="M33 43 Q40 49 47 43" stroke="#1d3557" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="17" rx="22" ry="10" fill="#2d2d2d"/><rect x="26" y="93" width="12" height="22" rx="4" fill="#1d3557"/><rect x="42" y="93" width="12" height="22" rx="4" fill="#1d3557"/><ellipse cx="32" cy="115" rx="8" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="115" rx="8" ry="5" fill="#2d2d2d"/>` },
+    { id:1, name:'Pahlawan', color:'#f9c74f', emoji:'⚔️', svgBody:`<path d="M18 62 Q10 90 20 115 L28 108 L40 116 L52 108 L60 115 Q70 90 62 62 Z" fill="#e63946" opacity="0.8"/><rect x="24" y="55" width="32" height="40" rx="6" fill="#f4a261"/><circle cx="40" cy="36" r="22" fill="#f9c74f"/><ellipse cx="40" cy="20" rx="22" ry="12" fill="#e63946"/><rect x="32" y="12" width="16" height="8" rx="2" fill="#f4a261"/><ellipse cx="33" cy="35" rx="4" ry="5" fill="#1d3557"/><ellipse cx="47" cy="35" rx="4" ry="5" fill="#1d3557"/><circle cx="34" cy="34" r="1.5" fill="white"/><circle cx="48" cy="34" r="1.5" fill="white"/><path d="M33 44 Q40 49 47 44" stroke="#1d3557" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="26" y="93" width="12" height="22" rx="4" fill="#1d3557"/><rect x="42" y="93" width="12" height="22" rx="4" fill="#1d3557"/><ellipse cx="32" cy="115" rx="8" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="115" rx="8" ry="5" fill="#2d2d2d"/><text x="36" y="78" font-size="14" fill="#f9c74f">★</text>` },
+    { id:2, name:'Robot', color:'#00b4d8', emoji:'🤖', svgBody:`<rect x="18" y="12" width="44" height="36" rx="8" fill="#415a77"/><rect x="24" y="18" width="12" height="10" rx="3" fill="#00b4d8"/><rect x="44" y="18" width="12" height="10" rx="3" fill="#00b4d8"/><circle cx="30" cy="23" r="3" fill="white"/><circle cx="50" cy="23" r="3" fill="white"/><rect x="26" y="36" width="28" height="8" rx="3" fill="#0d1b2a"/><rect x="38" y="4" width="4" height="10" rx="2" fill="#778da9"/><circle cx="40" cy="4" r="4" fill="#e63946"/><rect x="20" y="52" width="40" height="44" rx="6" fill="#778da9"/><rect x="24" y="94" width="14" height="22" rx="4" fill="#415a77"/><rect x="42" y="94" width="14" height="22" rx="4" fill="#415a77"/><ellipse cx="30" cy="116" rx="9" ry="5" fill="#0d1b2a"/><ellipse cx="50" cy="116" rx="9" ry="5" fill="#0d1b2a"/>` },
+    { id:3, name:'Petani', color:'#606c38', emoji:'🌾', svgBody:`<ellipse cx="40" cy="18" rx="30" ry="12" fill="#dda15e"/><ellipse cx="40" cy="18" rx="18" ry="8" fill="#bc6c25"/><rect x="22" y="14" width="36" height="10" rx="0" fill="#bc6c25"/><rect x="24" y="55" width="32" height="40" rx="6" fill="#606c38"/><circle cx="40" cy="36" r="20" fill="#f4a261"/><ellipse cx="33" cy="35" rx="4" ry="5" fill="#2d2d2d"/><ellipse cx="47" cy="35" rx="4" ry="5" fill="#2d2d2d"/><circle cx="34" cy="34" r="1.5" fill="white"/><circle cx="48" cy="34" r="1.5" fill="white"/><path d="M33 44 Q40 50 47 44" stroke="#2d2d2d" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="26" y="93" width="12" height="22" rx="4" fill="#606c38"/><rect x="42" y="93" width="12" height="22" rx="4" fill="#606c38"/><ellipse cx="32" cy="115" rx="8" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="115" rx="8" ry="5" fill="#2d2d2d"/>` },
+    { id:4, name:'Dokter', color:'#2a9d8f', emoji:'👨‍⚕️', svgBody:`<rect x="20" y="55" width="40" height="45" rx="6" fill="white"/><path d="M30 55 L40 68 L50 55" fill="#023e8a"/><circle cx="40" cy="76" r="2.5" fill="#023e8a"/><circle cx="40" cy="86" r="2.5" fill="#023e8a"/><circle cx="40" cy="36" r="22" fill="#f9c74f"/><rect x="24" y="30" width="13" height="10" rx="4" fill="none" stroke="#2d2d2d" stroke-width="2.5"/><rect x="43" y="30" width="13" height="10" rx="4" fill="none" stroke="#2d2d2d" stroke-width="2.5"/><line x1="37" y1="35" x2="43" y2="35" stroke="#2d2d2d" stroke-width="2"/><ellipse cx="40" cy="17" rx="20" ry="9" fill="#f9c74f"/><path d="M33 44 Q40 48 47 44" stroke="#2d2d2d" stroke-width="1.5" fill="none" stroke-linecap="round"/><rect x="26" y="94" width="12" height="22" rx="4" fill="#023e8a"/><rect x="42" y="94" width="12" height="22" rx="4" fill="#023e8a"/><ellipse cx="32" cy="116" rx="8" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="116" rx="8" ry="5" fill="#2d2d2d"/>` },
+    { id:5, name:'Atlet', color:'#e63946', emoji:'🏃', svgBody:`<rect x="22" y="55" width="36" height="42" rx="6" fill="#e63946"/><line x1="40" y1="55" x2="40" y2="97" stroke="white" stroke-width="3"/><circle cx="40" cy="36" r="22" fill="#f4a261"/><ellipse cx="33" cy="36" rx="4" ry="5" fill="#2d2d2d"/><ellipse cx="47" cy="36" rx="4" ry="5" fill="#2d2d2d"/><circle cx="34" cy="35" r="1.5" fill="white"/><circle cx="48" cy="35" r="1.5" fill="white"/><path d="M34 44 Q40 50 46 44" stroke="#2d2d2d" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="16" rx="20" ry="9" fill="#2d2d2d"/><rect x="26" y="95" width="12" height="22" rx="4" fill="#1d3557"/><rect x="42" y="95" width="12" height="22" rx="4" fill="#1d3557"/><ellipse cx="32" cy="117" rx="9" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="117" rx="9" ry="5" fill="#2d2d2d"/>` },
+    { id:6, name:'Penari', color:'#7b2d8b', emoji:'💃', svgBody:`<path d="M18 22 L22 8 L28 18 L40 6 L52 18 L58 8 L62 22 Z" fill="#ffd166"/><circle cx="40" cy="8" r="5" fill="#e63946"/><rect x="18" y="20" width="44" height="6" rx="3" fill="#7b2d8b"/><circle cx="40" cy="36" r="20" fill="#f4a261"/><ellipse cx="33" cy="34" rx="3.5" ry="5" fill="#2d2d2d"/><ellipse cx="47" cy="34" rx="3.5" ry="5" fill="#2d2d2d"/><circle cx="34" cy="33" r="1.5" fill="white"/><circle cx="48" cy="33" r="1.5" fill="white"/><path d="M20 56 L16 100 L28 100 L40 95 L52 100 L64 100 L60 56 Z" fill="#7b2d8b"/><ellipse cx="32" cy="115" rx="8" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="115" rx="8" ry="5" fill="#2d2d2d"/>` },
+    { id:7, name:'Ilmuwan', color:'#48cae4', emoji:'🔬', svgBody:`<rect x="20" y="55" width="40" height="45" rx="6" fill="white"/><circle cx="40" cy="36" r="22" fill="#f9c74f"/><rect x="24" y="30" width="13" height="10" rx="4" fill="none" stroke="#2d2d2d" stroke-width="2.5"/><rect x="43" y="30" width="13" height="10" rx="4" fill="none" stroke="#2d2d2d" stroke-width="2.5"/><line x1="37" y1="35" x2="43" y2="35" stroke="#2d2d2d" stroke-width="2"/><ellipse cx="40" cy="17" rx="20" ry="9" fill="#f9c74f"/><path d="M33 44 Q40 48 47 44" stroke="#2d2d2d" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M30 70 L32 100 L48 100 L50 70 Z" fill="#48cae4" opacity="0.6"/><rect x="26" y="94" width="12" height="22" rx="4" fill="#023e8a"/><rect x="42" y="94" width="12" height="22" rx="4" fill="#023e8a"/><ellipse cx="32" cy="116" rx="8" ry="5" fill="#2d2d2d"/><ellipse cx="48" cy="116" rx="8" ry="5" fill="#2d2d2d"/>` },
+];
+
+// ===== BONUS TYPES =====
+const BONUS_TYPES = [
+    { type:'jump_bonus', icon:'⬆', label:'+3 Poin Lompatan!', color:'#2a9d8f', jumpPts: 3 },
+    { type:'jetpack', icon:'🚀', label:'JETPACK! Terbang 10 Lantai!', color:'#9b59b6', jumpPts: 0 },
+    { type:'extra_life', icon:'❤️', label:'Nyawa Tambahan!', color:'#e63946', jumpPts: 0 },
+    { type:'freeze_lava', icon:'❄️', label:'Lava Beku! (10 detik)', color:'#00b4d8', jumpPts: 0 },
+    { type:'double_jumps', icon:'✖️', label:'Poin x2 dari Soal (15 detik)!', color:'#f4a261', jumpPts: 0 },
+    { type:'cover_holes', icon:'🪵', label:'Lantai Tertutup! (10 detik)', color:'#8B5E3C', jumpPts: 0 },
+    { type:'jump_bonus_med', icon:'⭐', label:'+2 Poin Lompatan!', color:'#f9c74f', jumpPts: 2 },
+];
+
+// ===== FIRE SPEED CONFIG =====
+const FIRE_SPEEDS = {
+    easy:   { base: 0.12, timeScale: 0.0008, floorScale: 0.005 },
+    medium: { base: 0.22, timeScale: 0.0015, floorScale: 0.009 },
+    hard:   { base: 0.38, timeScale: 0.002,  floorScale: 0.013 },
+};
+
+// Online Multiplayer via BroadcastChannel
+const BC_NAME = 'menara-kayu-berapi-v2';
+let bc = null;
+let roomData = { code:'', players:[], host:false, hostId:'', myId:'', diff:'easy', qdiff:'mixed' };
+
+function initBC() {
+    try { bc = new BroadcastChannel(BC_NAME); bc.onmessage = onBCMessage; } catch(e) { bc = null; }
+}
+function bcSend(msg) { if(bc) bc.postMessage(msg); }
+function generateRoomCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for(let i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
+    return code;
+}
+function saveRoomToLS(code,data) { try { localStorage.setItem('room_'+code, JSON.stringify({...data,ts:Date.now()})); } catch(e){} }
+function getRoomFromLS(code) {
+    try {
+        const d = localStorage.getItem('room_'+code);
+        if(!d) return null;
+        const p = JSON.parse(d);
+        if(Date.now()-p.ts>300000){ localStorage.removeItem('room_'+code); return null; }
+        return p;
+    } catch(e){ return null; }
+}
+function removeRoomFromLS(code) { try { localStorage.removeItem('room_'+code); } catch(e){} }
+let bcListeners = {};
+function onBCMessage(ev) {
+    const msg = ev.data;
+    if(!msg||!msg.type) return;
+    const handler = bcListeners[msg.type];
+    if(handler) handler(msg);
+}
+
+// ===== GAME STATE =====
+let G = {
+    mode:'singleplayer',
+    playerName:'PelajarHebat',
+    selectedAvatar:0,
+    diff:'easy',
+    qdiff:'mixed',
+    score:0,
+    lives:3,
+    floor:1,
+    jumpPoints:5,        // PERBAIKAN 2: mulai dengan 5 poin
+    maxJumpPoints:10,    // cap untuk bar indicator
+    totalJumpsUsed:0,
+    paused:false,
+    gameRunning:false,
+    gameOver:false,
+    lavaY:0,
+    lavaSpeed:0.2,
+    lavaFrozen:false,
+    lavaFreezeTimer:0,
+    doubleQuizPoints:false,
+    doubleQuizTimer:0,
+    coverHoles:false,
+    coverHolesTimer:0,
+    jetpackActive:false,
+    jetpackTarget:0,
+    questionSlots:[null,null,null],
+    questionPool:[],
+    questionsAsked:[],
+    gameLoopId:null,
+    elapsedSeconds:0,
+    timerInterval:null,
+    mpPlayers:[],
+    isHost:false,
+    screen:'screen-title',
+    _lavaCooldown:false,
+    lavaStarted:false,
+};
+
+// ===== PHYSICS & WORLD =====
+let canvas, ctx, W, H;
+let player = { x:80, y:0, vx:0, vy:0, w:38, h:56, onGround:false, jumpCount:0, facingRight:true, animFrame:0, animTimer:0 };
+let camera = { y:0 };
+const keys = {};
+
+// PERBAIKAN 1: Platform sistem baru
+// Floors dibuat dari bawah ke atas dengan koordinat y negatif
+// Floor index 0 = lantai paling bawah (ground), naik ke atas = index semakin besar
+// world y: 0 = titik awal, negatif = ke atas
+
+let floors = [];       // sorted: index 0=bottom, last=top
+let bonusItems = [];
+let highestFloorGenerated = 0;  // berapa lantai sudah digenerate
+
+const FLOOR_HEIGHT = 120;   // jarak antar lantai (1 lompatan = 1 lantai)
+const FLOOR_THICKNESS = 16;
+const JUMP_VY = -13.5;      // kecepatan lompat (harus cukup untuk 1 lantai)
+const MAX_JUMP_CHARGE = 5;  // lompatan maksimum berturut-turut tanpa ngisi
+
+// ===== UI HELPERS =====
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    G.screen = id;
+    if(id === 'screen-game') {
+        document.getElementById('hud').classList.remove('hidden');
+    } else {
+        document.getElementById('hud').classList.add('hidden');
+        document.getElementById('quiz-panel').classList.add('hidden');
+        document.getElementById('mp-panel').classList.add('hidden');
+        document.getElementById('lava-distance-bar').classList.remove('visible');
+    }
+}
+
+function showNotif(msg, type='info') {
+    const c = document.getElementById('notif-wrap');
+    const n = document.createElement('div');
+    n.className = `notif notif-${type}`;
+    n.textContent = msg;
+    c.appendChild(n);
+    setTimeout(() => n.remove(), 2300);
+}
+
+function floatPts(label, color='#f9c74f') {
+    const el = document.createElement('div');
+    el.className = 'float-pts';
+    const area = document.getElementById('game-area');
+    const rect = area.getBoundingClientRect();
+    const px = rect.left + (player.x - camera.y * 0) + player.w / 2;
+    const py = rect.top + (player.y - camera.y) - 10;
+    el.style.cssText = `color:${color}; left:${Math.min(px, rect.right-60)}px; top:${Math.max(py,rect.top+10)}px;`;
+    el.textContent = label;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1300);
+}
+
+// ===== SETUP SCREENS =====
+function showLobby(type) {
+    if(type === 'singleplayer') { renderAvatarRow('sp-avatar-row', 0); showScreen('screen-sp-setup'); }
+    else if(type === 'host') { renderAvatarRow('host-avatar-row', 0); initHostLobby(); showScreen('screen-host'); }
+    else { renderAvatarRow('join-avatar-row', 0); showScreen('screen-join'); }
+}
+
+function renderAvatarRow(containerId, selectedId) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = AVATARS.map(a => `
+        <div class="avatar-mini ${a.id===selectedId?'selected':''}" onclick="selectAvatar('${containerId}',${a.id})">
+            <svg width="36" height="54" viewBox="0 0 80 120">${a.svgBody}</svg>
+            <div class="avlbl">${a.name}</div>
+        </div>`).join('');
+}
+
+let spAvatarId=0, hostAvatarId=0, joinAvatarId=0;
+function selectAvatar(rowId, id) {
+    if(rowId==='sp-avatar-row') spAvatarId=id;
+    else if(rowId==='host-avatar-row') hostAvatarId=id;
+    else joinAvatarId=id;
+    renderAvatarRow(rowId, id);
+}
+
+let spDiff='easy', spQDiff='mixed';
+function setSPDiff(d) { spDiff=d; ['easy','medium','hard'].forEach(x=>document.getElementById('sp-diff-'+x)?.classList.toggle('active',x===d)); }
+function setSPQDiff(d) { spQDiff=d; ['easy','mixed','hard'].forEach(x=>document.getElementById('sp-qdiff-'+x)?.classList.toggle('active',x===d)); }
+
+let hostDiff='easy', hostQDiff='mixed';
+function setHostDiff(d) { hostDiff=d; ['easy','medium','hard'].forEach(x=>document.getElementById('host-diff-'+x)?.classList.toggle('active',x===d)); }
+function setHostQDiff(d) { hostQDiff=d; ['easy','mixed','hard'].forEach(x=>document.getElementById('host-qdiff-'+x)?.classList.toggle('active',x===d)); }
+
+function startSingleplayer() {
+    const name = document.getElementById('sp-name').value.trim() || 'PelajarHebat';
+    G.mode='singleplayer'; G.playerName=name; G.selectedAvatar=spAvatarId;
+    G.diff=spDiff; G.qdiff=spQDiff; G.isHost=false; G.mpPlayers=[];
+    initGame();
+}
+
+// ===== HOST LOBBY =====
+function initHostLobby() {
+    initBC();
+    const code = generateRoomCode();
+    roomData.code=code; roomData.host=true;
+    roomData.myId='host_'+Date.now(); roomData.hostId=roomData.myId;
+    roomData.players=[];
+    document.getElementById('host-room-code').textContent=code;
+    bcListeners['join_request'] = (msg) => {
+        if(msg.code!==roomData.code) return;
+        if(roomData.players.find(p=>p.id===msg.playerId)) return;
+        if(roomData.players.length>=5) return;
+        roomData.players.push({id:msg.playerId, name:msg.name, avatarId:msg.avatarId});
+        saveRoomToLS(roomData.code,{players:roomData.players,diff:hostDiff,qdiff:hostQDiff});
+        bcSend({type:'join_ack', code:roomData.code, players:roomData.players, diff:hostDiff, qdiff:hostQDiff});
+        updateHostPlayerList();
+    };
+    bcListeners['leave_room'] = (msg) => {
+        if(msg.code!==roomData.code) return;
+        roomData.players=roomData.players.filter(p=>p.id!==msg.playerId);
+        bcSend({type:'join_ack', code:roomData.code, players:roomData.players, diff:hostDiff, qdiff:hostQDiff});
+        updateHostPlayerList();
+    };
+    saveRoomToLS(code, {players:[], diff:hostDiff, qdiff:hostQDiff});
+    updateHostPlayerList();
+}
+
+function updateHostPlayerList() {
+    const hostName = document.getElementById('host-name').value.trim()||'Host';
+    const allPlayers = [{id:roomData.myId, name:hostName+' 👑', avatarId:hostAvatarId, isYou:true}, ...roomData.players];
+    document.getElementById('host-player-count').textContent=`(${allPlayers.length})`;
+    document.getElementById('host-player-list').innerHTML = allPlayers.map(p=>`
+        <div class="player-slot ${p.isYou?'you':''}">
+            <div class="player-dot"></div>
+            <span class="player-name">${p.name}</span>
+            ${p.isYou?'<span class="player-badge">Host</span>':''}
+        </div>`).join('');
+}
+
+function leaveHost() {
+    if(roomData.code){ bcSend({type:'host_left',code:roomData.code}); removeRoomFromLS(roomData.code); }
+    roomData={code:'',players:[],host:false,hostId:'',myId:'',diff:'easy',qdiff:'mixed'};
+    bcListeners={};
+    showScreen('screen-title');
+}
+
+function hostStartGame() {
+    const hostName = document.getElementById('host-name').value.trim()||'Host';
+    const allPlayers = [
+        {id:roomData.myId, name:hostName, avatarId:hostAvatarId, score:0, floor:1, lives:3, dead:false},
+        ...roomData.players.map(p=>({...p, score:0, floor:1, lives:3, dead:false}))
+    ];
+    G.mode='multiplayer'; G.playerName=hostName; G.selectedAvatar=hostAvatarId;
+    G.diff=hostDiff; G.qdiff=hostQDiff; G.isHost=true; G.mpPlayers=allPlayers;
+    bcSend({type:'game_start', code:roomData.code, players:allPlayers, diff:hostDiff, qdiff:hostQDiff});
+    initGame();
+}
+
+function copyRoomCode() {
+    const code = document.getElementById('host-room-code').textContent;
+    navigator.clipboard?.writeText(code).catch(()=>{});
+    const t = document.getElementById('copy-toast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function joinRoom() {
+    const code = document.getElementById('join-code').value.trim().toUpperCase();
+    const name = document.getElementById('join-name').value.trim()||'Pemain';
+    const errEl = document.getElementById('join-error');
+    errEl.textContent='';
+    if(code.length<4){ errEl.textContent='⚠️ Kode harus 4-6 karakter!'; return; }
+    initBC();
+    const playerId='player_'+Date.now();
+    roomData.myId=playerId; roomData.code=code; roomData.host=false;
+    bcListeners['join_ack'] = (msg) => {
+        if(msg.code!==code) return;
+        roomData.players=msg.players; roomData.diff=msg.diff; roomData.qdiff=msg.qdiff;
+        document.getElementById('waiting-code').textContent=code;
+        updateWaitingList(msg.players, name);
+        showScreen('screen-waiting');
+    };
+    bcListeners['game_start'] = (msg) => {
+        if(msg.code!==code) return;
+        G.mode='multiplayer'; G.playerName=name; G.selectedAvatar=joinAvatarId;
+        G.diff=msg.diff; G.qdiff=msg.qdiff; G.isHost=false; G.mpPlayers=msg.players;
+        initGame();
+    };
+    bcListeners['host_left'] = (msg) => {
+        if(msg.code!==code) return;
+        showNotif('⚠️ Host meninggalkan room!','wrong');
+        showScreen('screen-title');
+    };
+    bcSend({type:'join_request', code, playerId, name, avatarId:joinAvatarId});
+    setTimeout(()=>{
+        if(G.screen!=='screen-waiting') errEl.textContent='⚠️ Room tidak ditemukan. Cek kode atau minta host buka game di tab lain.';
+    }, 3500);
+}
+
+function updateWaitingList(players, myName) {
+    document.getElementById('waiting-player-list').innerHTML = players.map(p=>`
+        <div class="player-slot ${p.name===myName?'you':''}">
+            <div class="player-dot"></div>
+            <span class="player-name">${p.name}</span>
+            ${p.name===myName?'<span class="player-badge">Kamu</span>':''}
+        </div>`).join('');
+}
+
+function leaveRoom() {
+    bcSend({type:'leave_room', code:roomData.code, playerId:roomData.myId});
+    bcListeners={};
+    showScreen('screen-title');
+}
+
+// ===== GAME INIT =====
+function initGame() {
+    G.score=0; G.lives=3; G.floor=1;
+    G.jumpPoints=5;   // PERBAIKAN 2: mulai 5 poin
+    G.maxJumpPoints=10;
+    G.totalJumpsUsed=0;
+    G.paused=false; G.gameRunning=false; G.gameOver=false;
+    G.lavaFrozen=false; G.lavaFreezeTimer=0;
+    G.doubleQuizPoints=false; G.doubleQuizTimer=0;
+    G.jetpackActive=false; G.jetpackTarget=0;
+    G.coverHoles=false; G.coverHolesTimer=0;
+    G.questionSlots=[null,null,null];
+    G.questionPool=shuffleQuestions(G.qdiff);
+    G.questionsAsked=[];
+    G.elapsedSeconds=0;
+    G._lavaCooldown=false;
+    G.lavaStarted=false;
+    if(G.timerInterval) clearInterval(G.timerInterval);
+    if(G.gameLoopId) cancelAnimationFrame(G.gameLoopId);
+
+    showScreen('screen-game');
+    initCanvas();
+    generateTower();
+
+    document.getElementById('quiz-panel').classList.remove('hidden');
+    if(G.mode==='multiplayer') document.getElementById('mp-panel').classList.remove('hidden');
+    else document.getElementById('mp-panel').classList.add('hidden');
+
+    updateHUD();
+    fillQuestionSlots();
+    renderQuizPanel();
+    renderMPPanel();
+    startCountdown();
+}
+
+function initCanvas() {
+    canvas = document.getElementById('game-canvas');
+    const area = document.getElementById('game-area');
+    W = canvas.width = area.clientWidth;
+    H = canvas.height = area.clientHeight;
+    ctx = canvas.getContext('2d');
+}
+
+// ===== TOWER GENERATION — PERBAIKAN 1 =====
+// Koordinat: y=0 adalah tanah, y negatif adalah ke atas
+// floors[0] = lantai paling bawah (y=0), floors[n] = paling atas
+// Setiap lantai berjarak FLOOR_HEIGHT pixel (= 1 lompatan)
+
+function createFloor(index) {
+    const worldY = -(index * FLOOR_HEIGHT); // y negatif = ke atas
+    // Lubang: semakin tinggi = lebih banyak dan lebih lebar
+    const progress = Math.min(index / 60, 1); // 0-1 berdasarkan ketinggian
+    const holeCount = 1 + Math.floor(progress * 3); // 1-4 lubang
+    const holeWidthBase = 30 + Math.floor(progress * 55); // 30-85px
+
+    // Lantai 0, 1, 2 tidak ada lubang (hindari bug awal permainan)
+    const holes = index < 3 ? [] : generateHoles(W, holeCount, holeWidthBase);
+
+    // Bonus: ~25% chance per lantai (tidak di lantai 0,1,2)
+    let bonus = null;
+    if(index > 2 && Math.random() < 0.22) {
+        const bt = BONUS_TYPES[Math.floor(Math.random() * BONUS_TYPES.length)];
+        const safeX = findSafeX(holes, W, 32);
+        bonus = {
+            x: safeX, y: worldY - 32,
+            w: 32, h: 32,
+            ...bt,
+            collected: false,
+            animT: Math.random() * Math.PI * 2
+        };
+    }
+
+    const woodVariants = ['#8B5E3C','#7a5230','#A0724A','#956040','#6B4226'];
+    return {
+        index,
+        y: worldY,
+        w: W,
+        h: FLOOR_THICKNESS,
+        holes,
+        bonus,
+        woodColor: woodVariants[index % woodVariants.length],
+        darkColor: '#5a3418',
+    };
+}
+
+function generateHoles(w, count, holeW) {
+    const holes = [];
+    const margin = 50;
+    const usable = w - margin * 2;
+    const segment = usable / count;
+    for(let i=0; i<count; i++) {
+        const maxOffset = Math.max(0, segment - holeW - 10);
+        const x = margin + i * segment + (maxOffset > 0 ? Math.random() * maxOffset : 0);
+        holes.push({ x: Math.max(margin, Math.min(w - margin - holeW, x)), w: holeW });
+    }
+    return holes;
+}
+
+function findSafeX(holes, floorW, itemW) {
+    for(let attempt=0; attempt<30; attempt++) {
+        const x = 40 + Math.random() * (floorW - 80 - itemW);
+        const inHole = holes.some(h => x < h.x + h.w + 8 && x + itemW > h.x - 8);
+        if(!inHole) return x;
+    }
+    return 60;
+}
+
+function generateTower() {
+    floors = [];
+    bonusItems = [];
+    highestFloorGenerated = 0;
+
+    // Buat 8 lantai awal (floor 0–7)
+    for(let i=0; i<8; i++) {
+        const fl = createFloor(i);
+        floors.push(fl);
+        if(fl.bonus) bonusItems.push(fl.bonus);
+    }
+    highestFloorGenerated = 7;
+
+    // Player mulai di lantai 0 (floor paling bawah)
+    player.x = W / 2 - player.w / 2;
+    player.y = floors[0].y - player.h; // di atas floor 0
+    player.vx = 0; player.vy = 0;
+    player.onGround = true; player.jumpCount = 0;
+
+    // Camera: center pada player
+    camera.y = player.y - H * 0.6;
+
+    // Lava mulai lebih dekat (setengah lebih tinggi dari sebelumnya)
+    G.lavaY = floors[0].y + FLOOR_THICKNESS + H * 0.75;
+    G.lavaSpeed = FIRE_SPEEDS[G.diff || 'easy'].base;
+}
+
+function ensureFloors() {
+    // Cari lantai tertinggi yang dekat dengan player
+    // Player saat ini di lantai berapa? (hitung dari posisi y)
+    const playerFloorIndex = Math.round(-player.y / FLOOR_HEIGHT);
+    
+    // Generate lantai sampai 8 lantai di atas player
+    const neededTop = playerFloorIndex + 8;
+    
+    while(highestFloorGenerated < neededTop) {
+        highestFloorGenerated++;
+        const fl = createFloor(highestFloorGenerated);
+        floors.push(fl);
+        if(fl.bonus) bonusItems.push(fl.bonus);
+    }
+}
+
+function shuffleQuestions(qdiff) {
+    let pool = [...QUESTIONS];
+    if(qdiff==='easy') pool=pool.filter(q=>q.diff==='easy');
+    else if(qdiff==='hard') pool=pool.filter(q=>q.diff!=='easy');
+    for(let i=pool.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [pool[i],pool[j]]=[pool[j],pool[i]];
+    }
+    return pool;
+}
+
+function fillQuestionSlots() {
+    for(let i=0;i<3;i++) {
+        if(!G.questionSlots[i]) G.questionSlots[i]=getNextQuestion();
+    }
+    renderQuizPanel();
+    updateHUD();
+}
+
+function getNextQuestion() {
+    if(G.questionPool.length===0){ G.questionPool=shuffleQuestions(G.qdiff); G.questionsAsked=[]; }
+    const q = G.questionPool.shift();
+    if(q){ q._answered=false; q._result=null; q._showResult=false; }
+    return q||null;
+}
+
+// ===== COUNTDOWN =====
+function startCountdown() {
+    let count=3;
+    const overlay=document.getElementById('countdown-overlay');
+    const num=document.getElementById('countdown-num');
+    const lbl=document.getElementById('countdown-label');
+    overlay.classList.remove('hidden');
+    const colors=['#e63946','#f9c74f','#2a9d8f'];
+    const go=()=>{
+        num.textContent = count>0?count:'GO!';
+        num.style.color = count>0?colors[count-1]:'#52b788';
+        num.style.animation='none';
+        setTimeout(()=>{num.style.animation='count-pulse 1s ease-in-out';},10);
+        lbl.textContent = count>0?'Bersiaplah...':'Panjat Menara!';
+        if(count<=0){
+            setTimeout(()=>{overlay.classList.add('hidden'); launchGame();},800);
+            return;
+        }
+        count--;
+        setTimeout(go,1000);
+    };
+    go();
+}
+
+function launchGame() {
+    G.gameRunning=true;
+    G.lavaStarted=false;
+    updateHUD();
+    showNotif('🔥 Api mulai naik! Kumpulkan poin lompatan!','fire');
+
+    setTimeout(()=>{ G.lavaStarted=true; }, 3000);
+
+    G.timerInterval = setInterval(()=>{
+        if(G.paused||!G.gameRunning||G.gameOver) return;
+        G.elapsedSeconds++;
+
+        const fs = FIRE_SPEEDS[G.diff||'easy'];
+        if(!G.lavaFrozen) {
+            G.lavaSpeed = fs.base + G.elapsedSeconds*fs.timeScale + G.floor*fs.floorScale;
+        }
+
+        if(G.lavaFrozen){ G.lavaFreezeTimer--; if(G.lavaFreezeTimer<=0){G.lavaFrozen=false; showNotif('🔥 Lava bergerak lagi!','fire');} }
+        if(G.doubleQuizPoints){ G.doubleQuizTimer--; if(G.doubleQuizTimer<=0){G.doubleQuizPoints=false; updateBonusHUD();} }
+        if(G.coverHoles){ G.coverHolesTimer--; if(G.coverHolesTimer<=0){G.coverHoles=false;} }
+
+        if(G.mode==='multiplayer'){
+            bcSend({type:'player_update', code:roomData.code, playerId:roomData.myId, score:G.score, floor:G.floor, lives:G.lives, dead:G.gameOver});
+        }
+        updateHUD();
+    }, 1000);
+
+    if(G.mode==='multiplayer'){
+        bcListeners['player_update'] = (msg)=>{
+            if(msg.code!==roomData.code) return;
+            const p=G.mpPlayers.find(x=>x.id===msg.playerId);
+            if(p){ p.score=msg.score; p.floor=msg.floor; p.lives=msg.lives; p.dead=msg.dead; }
+            renderMPPanel();
+        };
+    }
+
+    gameLoop();
+}
+
+// ===== GAME LOOP =====
+function gameLoop() {
+    if(!G.gameRunning||G.gameOver) return;
+    if(!G.paused){ update(); draw(); }
+    G.gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+function update() {
+    const GRAVITY = 0.45;
+    const SPEED = 4.0;
+
+    // Movement
+    player.vx=0;
+    if(keys['ArrowLeft']||keys['KeyA']){ player.vx=-SPEED; player.facingRight=false; }
+    if(keys['ArrowRight']||keys['KeyD']){ player.vx=SPEED; player.facingRight=true; }
+
+    // PERBAIKAN 2: Jump menggunakan jump points
+    const wantJump = (keys['ArrowUp']||keys['KeyW']||keys['Space']);
+    if(wantJump && keys._canJump && player.onGround) {
+        if(G.jumpPoints > 0) {
+            player.vy = JUMP_VY;
+            player.jumpCount++;
+            player.onGround = false;
+            keys._canJump = false;
+            G.jumpPoints--;
+            G.totalJumpsUsed++;
+            updateHUD();
+        } else {
+            // Tidak bisa lompat - efek visual
+            if(!G._noJumpFlash) {
+                G._noJumpFlash = true;
+                showNotif('❌ Poin lompatan habis! Jawab soal untuk isi!','wrong');
+                setTimeout(()=>{ G._noJumpFlash=false; }, 2000);
+            }
+        }
+    }
+    if(!wantJump) keys._canJump=true;
+
+    // Jetpack: terbang cepat ke atas
+    if(G.jetpackActive) {
+        player.vy = -18; // terbang ke atas sangat cepat
+        player.onGround = false;
+        if(player.y <= G.jetpackTarget) {
+            G.jetpackActive = false;
+            player.vy = 0;
+            showNotif('🚀 Jetpack selesai!', 'info');
+        }
+    }
+
+    // Physics
+    player.vy += GRAVITY;
+    player.x += player.vx;
+    player.y += player.vy;
+    player.onGround = false;
+
+    // Horizontal wrap
+    if(player.x < -player.w) player.x = W;
+    if(player.x > W) player.x = -player.w;
+
+    // Ensure floors are generated as player climbs
+    ensureFloors();
+
+    // Floor collision — only check floors near player (skip when jetpack going up)
+    const camY = camera.y;
+    let newFloorIndex = -1;
+
+    floors.forEach(fl => {
+        const screenY = fl.y - camY;
+        if(screenY > H + 150 || screenY < -150) return; // cull
+
+        const pLeft = player.x;
+        const pRight = player.x + player.w;
+        const pBottom = player.y + player.h;
+        const flTop = fl.y;
+
+        // Landing detection (skip during jetpack)
+        if(!G.jetpackActive && player.vy >= 0 && pBottom > flTop && pBottom < flTop + FLOOR_THICKNESS + 14) {
+            const inHole = !G.coverHoles && fl.holes.some(h => pRight > h.x+5 && pLeft < h.x+h.w-5);
+            if(!inHole) {
+                player.y = flTop - player.h;
+                player.vy = 0;
+                player.onGround = true;
+                player.jumpCount = 0;
+                if(fl.index > newFloorIndex) newFloorIndex = fl.index;
+            }
+        }
+    });
+
+    // Update floor count if player climbed
+    if(newFloorIndex >= 0 && (newFloorIndex + 1) > G.floor) {
+        G.floor = newFloorIndex + 1;
+        G.score += 1;
+        updateHUD();
+    }
+
+    // Collect bonus items
+    bonusItems.forEach(bi => {
+        if(bi.collected) return;
+        const screenY = bi.y - camY;
+        if(screenY > H + 60 || screenY < -60) return;
+        if(player.x+player.w > bi.x && player.x < bi.x+bi.w &&
+           player.y+player.h > bi.y && player.y < bi.y+bi.h) {
+            bi.collected = true;
+            collectBonus(bi);
+        }
+        bi.animT = (bi.animT||0) + 0.06;
+    });
+
+    // Camera: follow player, centered at 55% from top
+    const targetCamY = player.y - H * 0.55;
+    camera.y += (targetCamY - camera.y) * 0.09;
+
+    // Lava rises upward (y decreases)
+    if(G.lavaStarted && !G.lavaFrozen) {
+        G.lavaY -= G.lavaSpeed;
+    }
+
+    // Lava warning
+    const lavaScreenY = G.lavaY - camera.y;
+    document.getElementById('lava-warning').classList.toggle('active', lavaScreenY < H * 0.55);
+
+    // Update lava distance indicator
+    updateLavaDistanceIndicator();
+
+    // Player touched lava
+    if(player.y + player.h >= G.lavaY) hitLava();
+    if(player.y > G.lavaY + 150) hitLava();
+
+    // Animate player
+    player.animTimer++;
+    if(player.animTimer > 8){ player.animFrame=(player.animFrame+1)%4; player.animTimer=0; }
+}
+
+function hitLava() {
+    if(G._lavaCooldown) return;
+    G._lavaCooldown=true;
+    setTimeout(()=>{ G._lavaCooldown=false; }, 1800);
+
+    G.lives--;
+    updateLives();
+    showNotif('🔥 Kena api! -1 Nyawa','fire');
+
+    player.vy = -14;
+    player.y -= 40;
+
+    const d = document.getElementById('dead-overlay');
+    d.classList.remove('hidden');
+    setTimeout(()=>d.classList.add('hidden'), 900);
+
+    if(G.lives <= 0) {
+        setTimeout(()=>endGame(false), 1300);
+    } else {
+        updateHUD();
+    }
+}
+
+function collectBonus(bi) {
+    showNotif('🎁 ' + bi.label, 'bonus');
+
+    switch(bi.type) {
+        case 'jump_bonus':
+        case 'jump_bonus_big':
+        case 'jump_bonus_med':
+            G.jumpPoints = Math.min(G.jumpPoints + bi.jumpPts, G.maxJumpPoints + 5);
+            floatPts('+' + bi.jumpPts + ' ⬆', bi.color);
+            break;
+        case 'extra_life':
+            if(G.lives < 5){ G.lives++; updateLives(); }
+            floatPts('+1 ❤️', '#e63946');
+            break;
+        case 'freeze_lava':
+            G.lavaFrozen=true; G.lavaFreezeTimer=10;
+            floatPts('❄️ BEKU!', '#00b4d8');
+            break;
+        case 'double_jumps':
+            G.doubleQuizPoints=true; G.doubleQuizTimer=15;
+            floatPts('✖️2 Aktif!', '#f4a261');
+            break;
+        case 'jetpack':
+            G.jetpackActive = true;
+            G.jetpackTarget = player.y - FLOOR_HEIGHT * 10;
+            floatPts('🚀 JETPACK!', '#9b59b6');
+            break;
+        case 'cover_holes':
+            G.coverHoles=true; G.coverHolesTimer=10;
+            floatPts('🪵 Tertutup!', '#8B5E3C');
+            break;
+    }
+    updateBonusHUD();
+    updateHUD();
+}
+
+function updateBonusHUD() {
+    const el = document.getElementById('hud-bonus');
+    const active=[];
+    if(G.doubleQuizPoints) active.push('✖️×2 Soal');
+    if(G.lavaFrozen) active.push('❄️ Beku');
+    if(G.coverHoles) active.push('🪵 Lantai Penuh');
+    if(active.length>0){ el.style.display='block'; el.textContent=active.join(' | '); }
+    else el.style.display='none';
+}
+
+// ===== DRAW — PERBAIKAN 4: Tekstur kayu hangat =====
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // PERBAIKAN 4: Background kayu hangat (bukan gelap berapi)
+    drawWoodBackground();
+
+    // Draw floors
+    drawFloors();
+
+    // Draw bonus items
+    drawBonusItems();
+
+    // Draw player
+    drawPlayer();
+
+    // Draw lava
+    drawLava();
+
+    // Vignette tepi layar (subtle, bukan gelap total)
+    drawVignette();
+}
+
+function drawWoodBackground() {
+    // Background utama: warna kayu hangat
+    const grd = ctx.createLinearGradient(0, 0, 0, H);
+    grd.addColorStop(0, '#c8924a');   // kayu terang atas
+    grd.addColorStop(0.4, '#b07840');  // kayu medium
+    grd.addColorStop(0.75, '#8a5c2c'); // kayu gelap bawah
+    grd.addColorStop(1, '#6a3e18');    // sangat gelap di bawah (dekat lava)
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    // Serat kayu horizontal (parallax lambat)
+    const camOff = (camera.y * 0.2) % 30;
+    ctx.globalAlpha = 0.12;
+    ctx.strokeStyle = '#5a2e0a';
+    ctx.lineWidth = 1.5;
+    for(let y = -30 + (camOff % 30); y < H + 30; y += 28) {
+        ctx.beginPath();
+        // Buat serat kayu berliku
+        ctx.moveTo(0, y);
+        for(let x=0; x<=W; x+=60) {
+            const wave = Math.sin(x * 0.015 + y * 0.03 + camera.y * 0.001) * 4;
+            ctx.lineTo(x+60, y + wave);
+        }
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 0.07;
+    ctx.strokeStyle = '#f0b070';
+    ctx.lineWidth = 1;
+    for(let y = -15 + (camOff % 28); y < H + 15; y += 28) {
+        ctx.beginPath();
+        ctx.moveTo(0, y + 4);
+        for(let x=0; x<=W; x+=60) {
+            const wave = Math.sin(x * 0.013 + y * 0.025 + camera.y * 0.001) * 3;
+            ctx.lineTo(x+60, y + 4 + wave);
+        }
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Lingkaran tahun kayu (dekoratif, parallax lambat)
+    ctx.globalAlpha = 0.05;
+    const ringCamX = W/2;
+    const ringCamY = H/2 + camera.y * 0.05;
+    for(let r=50; r<400; r+=45) {
+        ctx.beginPath();
+        ctx.ellipse(ringCamX, ringCamY + (camera.y * 0.01 % 45), r * 1.4, r * 0.7, 0, 0, Math.PI*2);
+        ctx.strokeStyle = '#4a1e05';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+}
+
+function drawVignette() {
+    // Vignette sisi kiri-kanan dan atas-bawah (subtle)
+    const grad = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.85);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(40,15,0,0.35)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Glow api dari bawah (subtle)
+    const lavaScreenY = G.lavaY - camera.y;
+    if(lavaScreenY < H + 100) {
+        const glowH = Math.max(0, H - lavaScreenY + 60);
+        const grd = ctx.createLinearGradient(0, H, 0, H - Math.min(glowH, 150));
+        grd.addColorStop(0, G.lavaFrozen ? 'rgba(0,100,180,0.35)' : 'rgba(255,80,0,0.3)');
+        grd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, H - Math.min(glowH, 150), W, Math.min(glowH, 150));
+    }
+}
+
+function drawFloors() {
+    const camY = camera.y;
+
+    floors.forEach(fl => {
+        const screenY = fl.y - camY;
+        if(screenY > H + 80 || screenY < -80) return;
+
+        const floorW = fl.w;
+        const sortedHoles = [...fl.holes].sort((a,b)=>a.x-b.x);
+
+        // Build solid segments
+        const segments = [];
+        let cur = 0;
+        sortedHoles.forEach(h => {
+            if(h.x > cur) segments.push({x:cur, w:h.x-cur});
+            cur = h.x + h.w;
+        });
+        if(cur < floorW) segments.push({x:cur, w:floorW-cur});
+
+        segments.forEach(seg => {
+            // Papan kayu utama
+            ctx.fillStyle = fl.woodColor;
+            roundRect2(ctx, seg.x, screenY, seg.w, FLOOR_THICKNESS, 3);
+
+            // Serat kayu detail
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            for(let gx=seg.x+14; gx<seg.x+seg.w-6; gx+=20) {
+                ctx.fillRect(gx, screenY+2, 2, FLOOR_THICKNESS-4);
+            }
+
+            // Highlight atas
+            ctx.fillStyle = 'rgba(255,230,180,0.18)';
+            ctx.fillRect(seg.x+2, screenY+2, seg.w-4, 3);
+
+            // Shadow bawah
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.fillRect(seg.x+1, screenY+FLOOR_THICKNESS-4, seg.w-2, 3);
+
+            // Paku kayu kiri-kanan (detail)
+            ctx.fillStyle = 'rgba(50,30,10,0.6)';
+            ctx.beginPath();
+            ctx.arc(seg.x+8, screenY+FLOOR_THICKNESS/2, 3, 0, Math.PI*2);
+            ctx.fill();
+            if(seg.w > 30) {
+                ctx.beginPath();
+                ctx.arc(seg.x+seg.w-8, screenY+FLOOR_THICKNESS/2, 3, 0, Math.PI*2);
+                ctx.fill();
+            }
+        });
+
+        // Cover holes: tampilkan kayu penutup di atas lubang
+        if(G.coverHoles) {
+            fl.holes.forEach(h => {
+                ctx.fillStyle = '#A0724A';
+                roundRect2(ctx, h.x, screenY, h.w, FLOOR_THICKNESS, 3);
+                // Highlight
+                ctx.fillStyle = 'rgba(255,230,180,0.18)';
+                ctx.fillRect(h.x+2, screenY+2, h.w-4, 3);
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(h.x+1, screenY+FLOOR_THICKNESS-4, h.w-2, 3);
+                // Tanda kayu penutup
+                ctx.fillStyle = 'rgba(200,150,80,0.6)';
+                ctx.font = 'bold 9px Nunito';
+                ctx.textAlign = 'center';
+                ctx.fillText('🪵', h.x + h.w/2, screenY + FLOOR_THICKNESS/2 + 4);
+            });
+        }
+
+        // Label lantai setiap 10 lantai
+        if(fl.index > 0 && fl.index % 10 === 0) {
+            ctx.fillStyle = 'rgba(255,200,80,0.75)';
+            ctx.font = 'bold 11px Fredoka One';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⬆ Lantai ' + fl.index, 4, screenY + FLOOR_THICKNESS/2);
+        }
+    });
+}
+
+function drawBonusItems() {
+    const camY = camera.y;
+    bonusItems.forEach(bi => {
+        if(bi.collected) return;
+        const screenY = bi.y - camY;
+        if(screenY > H + 60 || screenY < -60) return;
+        const bob = Math.sin(bi.animT) * 5;
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(bi.x+bi.w/2, screenY+bi.h/2+bob, 20, 0, Math.PI*2);
+        ctx.fillStyle = bi.color + '33';
+        ctx.fill();
+
+        ctx.font = '22px serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(bi.icon, bi.x+bi.w/2, screenY+bi.h/2+bob);
+
+        // Label kecil
+        ctx.font = 'bold 9px Nunito';
+        ctx.fillStyle = bi.color;
+        ctx.fillText(bi.icon==='⬆'||bi.icon==='⭐'?'+'+bi.jumpPts+'⬆':bi.icon==='🚀'?'JETPACK':'!', bi.x+bi.w/2, screenY+bi.h/2+bob+16);
+    });
+}
+
+function drawPlayer() {
+    const camY = camera.y;
+    const px = player.x;
+    const py = player.y - camY;
+    const av = AVATARS[G.selectedAvatar];
+
+    // Jetpack flame effect
+    if(G.jetpackActive) {
+        const t = Date.now() * 0.008;
+        for(let i=0; i<5; i++) {
+            const fx = px + player.w/2 + (Math.sin(t+i)*10);
+            const fy = py + player.h + (i * 6);
+            ctx.beginPath();
+            ctx.arc(fx, fy, 6 - i, 0, Math.PI*2);
+            const alpha = 1 - i * 0.18;
+            ctx.fillStyle = i < 2 ? `rgba(255,255,100,${alpha})` : i < 4 ? `rgba(255,100,0,${alpha})` : `rgba(150,0,0,${alpha})`;
+            ctx.fill();
+        }
+    }
+
+    ctx.save();
+    const scaleX = player.facingRight ? 1 : -1;
+    const originX = player.facingRight ? px : px + player.w;
+    ctx.translate(originX, py);
+    ctx.scale(scaleX, 1);
+
+    const offsetX = player.facingRight ? 0 : -player.w * 0.05;
+    const bob = player.onGround ? Math.sin(player.animFrame * 1.2) * 2 : 0;
+    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="46" height="70" viewBox="0 0 80 120">${av.svgBody}</svg>`;
+    const img = new Image();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+    ctx.drawImage(img, offsetX, bob, 46, 70);
+    ctx.restore();
+
+    // Name tag
+    ctx.save();
+    ctx.font = 'bold 10px Nunito';
+    ctx.textAlign = 'center';
+    const nw = ctx.measureText(G.playerName).width + 12;
+    ctx.fillStyle = 'rgba(20,8,0,0.75)';
+    roundRect2(ctx, px + player.w/2 - nw/2, py - 20, nw, 15, 4);
+    ctx.fillStyle = av.color;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(G.playerName, px + player.w/2, py - 12);
+    ctx.restore();
+
+    // Jump points indicator above player (when low)
+    if(G.jumpPoints <= 2) {
+        ctx.save();
+        ctx.font = 'bold 12px Fredoka One';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = G.jumpPoints === 0 ? '#e63946' : '#f9c74f';
+        ctx.fillText('⬆' + G.jumpPoints, px + player.w/2, py - 30);
+        ctx.restore();
+    }
+}
+
+function drawLava() {
+    const camY = camera.y;
+    const lavaScreenY = G.lavaY - camY;
+    if(lavaScreenY > H + 300) return;
+
+    const t = Date.now() * 0.001;
+
+    // Lava body
+    const lavaGrd = ctx.createLinearGradient(0, lavaScreenY, 0, lavaScreenY + 220);
+    lavaGrd.addColorStop(0, G.lavaFrozen ? '#00b4d8' : '#ff4500');
+    lavaGrd.addColorStop(0.25, G.lavaFrozen ? '#0077b6' : '#cc2200');
+    lavaGrd.addColorStop(1, G.lavaFrozen ? '#023e8a' : '#5a0000');
+    ctx.fillStyle = lavaGrd;
+    ctx.fillRect(0, lavaScreenY, W, H - lavaScreenY + 100);
+
+    // Wave surface
+    ctx.beginPath();
+    ctx.moveTo(0, lavaScreenY);
+    for(let x=0; x<=W; x+=8) {
+        const wave = Math.sin(x*0.032+t*2.5)*7 + Math.sin(x*0.07+t*3.5)*3;
+        ctx.lineTo(x, lavaScreenY+wave);
+    }
+    ctx.lineTo(W, lavaScreenY+25);
+    ctx.lineTo(0, lavaScreenY+25);
+    ctx.closePath();
+    ctx.fillStyle = G.lavaFrozen ? 'rgba(0,180,216,0.4)' : 'rgba(255,130,0,0.45)';
+    ctx.fill();
+
+    // Gelembung
+    if(!G.lavaFrozen) {
+        for(let i=0;i<6;i++) {
+            const bx=((i*137+t*40)%W);
+            const by=lavaScreenY+8+Math.sin(t*2.5+i*1.3)*7;
+            ctx.beginPath();
+            ctx.arc(bx,by,3+(i%3)*2,0,Math.PI*2);
+            ctx.fillStyle='rgba(255,210,0,0.7)';
+            ctx.fill();
+        }
+    }
+
+    // Frozen label
+    if(G.lavaFrozen) {
+        ctx.fillStyle='rgba(150,240,255,0.9)';
+        ctx.font='13px Fredoka One';
+        ctx.textAlign='center';
+        ctx.fillText('❄️ LAVA BEKU ❄️', W/2, lavaScreenY - 12);
+    }
+}
+
+function roundRect2(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath(); ctx.fill();
+}
+
+// ===== HUD =====
+function updateHUD() {
+    document.getElementById('hud-score').textContent = G.score.toLocaleString();
+    document.getElementById('hud-floor').textContent = G.floor;
+    document.getElementById('hud-player-name').textContent = G.playerName;
+
+    // Jump points indicator
+    const jpEl = document.getElementById('jump-pts-val');
+    jpEl.textContent = G.jumpPoints;
+    jpEl.className = G.jumpPoints === 0 ? 'zero' : G.jumpPoints <= 2 ? 'low' : '';
+
+    // Bar fill
+    const maxBar = Math.max(G.maxJumpPoints, G.jumpPoints);
+    const pct = Math.min(100, (G.jumpPoints / maxBar) * 100);
+    document.getElementById('hud-jumps-fill').style.width = pct + '%';
+    document.getElementById('hud-jumps-fill').style.background =
+        G.jumpPoints === 0 ? '#e63946' :
+        G.jumpPoints <= 2 ? 'linear-gradient(90deg,#f9c74f,#e07b00)' :
+        'linear-gradient(90deg,#2a9d8f,#52b788)';
+
+    // Slot indicators
+    G.questionSlots.forEach((q,i)=>{
+        const el = document.getElementById('slot-'+i);
+        if(!el) return;
+        if(q){ el.className=`q-slot ${q.diff}`; el.textContent={easy:'E',medium:'S',hard:'H'}[q.diff]; }
+        else { el.className='q-slot empty'; el.textContent='—'; }
+    });
+    updateBonusHUD();
+}
+
+function updateLavaDistanceIndicator() {
+    const bar = document.getElementById('lava-distance-bar');
+    if(!G.gameRunning || G.gameOver) { bar.classList.remove('visible'); return; }
+    bar.classList.add('visible');
+
+    // Jarak dalam "lantai" = 1 meter
+    const distPx = player.y + player.h - G.lavaY; // positif = player di atas lava
+    const distMeters = Math.max(0, Math.round(-distPx / FLOOR_HEIGHT * 10) / 10);
+
+    const maxSafe = 15; // 15 lantai = referensi penuh
+    const pct = Math.max(0, Math.min(100, (distMeters / maxSafe) * 100));
+
+    const fill = document.getElementById('lava-dist-fill');
+    const label = document.getElementById('lava-dist-meters');
+
+    // Warna berdasarkan jarak
+    let color;
+    if(distMeters <= 2) color = '#e63946';
+    else if(distMeters <= 5) color = '#ff8c00';
+    else color = '#52b788';
+
+    fill.style.width = pct + '%';
+    fill.style.background = color;
+    label.textContent = distMeters.toFixed(1) + ' m';
+    label.className = distMeters <= 2 ? 'danger' : '';
+}
+
+function updateLives() {
+    const el = document.getElementById('hud-lives');
+    el.innerHTML='';
+    for(let i=0;i<3;i++){
+        const h=document.createElement('span');
+        h.className='lh'+(i>=G.lives?' lost':'');
+        h.textContent='❤️';
+        el.appendChild(h);
+    }
+}
+
+// ===== QUIZ PANEL — PERBAIKAN 3: Poin soal =====
+// easy=1, medium=2, hard=3 jump points
+function renderQuizPanel() {
+    const container = document.getElementById('quiz-slots-container');
+    const count = G.questionSlots.filter(Boolean).length;
+    document.getElementById('qp-count').textContent=`(${count}/3)`;
+    container.innerHTML='';
+
+    G.questionSlots.forEach((q,slotIdx)=>{
+        if(!q) {
+            const empty=document.createElement('div');
+            empty.className='slot-label';
+            empty.style.cssText='font-size:0.7rem;color:var(--muted);text-align:center;padding:6px 0;';
+            empty.textContent=`Slot ${slotIdx+1} — Kosong`;
+            container.appendChild(empty);
+            return;
+        }
+        const card=document.createElement('div');
+        card.className='quiz-card'+(q._showResult?'':' active');
+
+        // Perbaikan: easy=2, medium=3, hard=4
+        const pts = {easy:2, medium:3, hard:4}[q.diff];
+        const diffLabel = {easy:'MUDAH',medium:'SEDANG',hard:'SULIT'}[q.diff];
+        const diffClass = {easy:'tag-easy',medium:'tag-medium',hard:'tag-hard'}[q.diff];
+        const silaBadge = ['📚','☝️','🤝','🌳','🐃','🌾'][q.sila]||'📚';
+
+        let ansHtml='';
+        if(q._showResult) {
+            const feedback = q._result==='correct'
+                ? `<div class="q-feedback" style="color:var(--green)">✓ Benar! +${pts} ⬆ Lompatan</div>`
+                : `<div class="q-feedback" style="color:var(--red)">✗ Salah!</div>`;
+            ansHtml = feedback;
+        } else {
+            const letters=['A','B','C','D'];
+            ansHtml=`<div class="answer-grid-small">`+
+                q.opts.map((opt,i)=>`<button class="ans-btn ${letters[i]}" onclick="handleAnswer(${slotIdx},${i})">${letters[i]}. ${opt}</button>`).join('')+
+                `</div>`;
+        }
+
+        card.innerHTML=`
+            <div class="quiz-diff-tag ${diffClass}">${silaBadge} Sila ${q.sila||'U'} · ${diffLabel} · +${G.doubleQuizPoints?pts*2:pts}⬆</div>
+            <div class="quiz-q-text">${q.text}</div>
+            ${ansHtml}
+        `;
+        container.appendChild(card);
+    });
+}
+
+function handleAnswer(slotIdx, answerIdx) {
+    const q = G.questionSlots[slotIdx];
+    if(!q||q._answered) return;
+    q._answered=true;
+
+    const correct = answerIdx === q.correct;
+    // Perbaikan: easy=2, medium=3, hard=4
+    const basePts = {easy:2, medium:3, hard:4}[q.diff];
+    const pts = G.doubleQuizPoints ? basePts*2 : basePts;
+
+    if(correct) {
+        G.jumpPoints = Math.min(G.jumpPoints + pts, G.maxJumpPoints + 5);
+        G.score += pts;
+        q._result='correct';
+        floatPts('+'+pts+' ⬆', '#52b788');
+        showNotif(`✓ Benar! +${pts} poin lompatan`,'correct');
+    } else {
+        q._result='wrong';
+        showNotif('✗ Salah!','wrong');
+    }
+
+    q._showResult=true;
+    renderQuizPanel();
+    updateHUD();
+
+    setTimeout(()=>{
+        G.questionSlots[slotIdx]=null;
+        setTimeout(()=>{
+            if(G.gameRunning&&!G.gameOver){
+                G.questionSlots[slotIdx]=getNextQuestion();
+                renderQuizPanel(); updateHUD();
+            }
+        }, 300);
+        renderQuizPanel();
+    }, 2000);
+}
+
+// ===== MP PANEL =====
+function renderMPPanel() {
+    if(G.mode!=='multiplayer') return;
+    const container = document.getElementById('mp-list');
+    const sorted = [...G.mpPlayers].sort((a,b)=>b.score-a.score);
+    container.innerHTML = sorted.map((p,rank)=>{
+        const isMe = p.id===roomData.myId;
+        return `<div class="mp-player ${isMe?'you':''} ${p.dead?'dead':''}">
+            <div style="font-size:1.1rem;">${AVATARS[p.avatarId||0].emoji}</div>
+            <div class="mp-player-info">
+                <div class="mp-player-name">${rank+1}. ${p.name}${isMe?' 👤':''}</div>
+                <div class="mp-player-score">${p.score} Poin</div>
+                <div class="mp-player-floor">Lantai ${p.floor||1}</div>
+            </div>
+            <div>${p.dead?'💀':'❤️'.repeat(Math.max(0,p.lives||3))}</div>
+        </div>`;
+    }).join('');
+}
+
+// ===== PAUSE =====
+function togglePause() {
+    G.paused=!G.paused;
+    document.getElementById('pause-menu').classList.toggle('hidden',!G.paused);
+}
+
+// ===== END GAME =====
+function endGame(fromQuit=false) {
+    G.gameRunning=false; G.gameOver=true;
+    if(G.timerInterval) clearInterval(G.timerInterval);
+    if(G.gameLoopId) cancelAnimationFrame(G.gameLoopId);
+    document.getElementById('pause-menu').classList.add('hidden');
+    document.getElementById('lava-warning').classList.remove('active');
+    document.getElementById('dead-overlay').classList.add('hidden');
+    if(G.mode==='multiplayer') bcSend({type:'player_update',code:roomData.code,playerId:roomData.myId,score:G.score,floor:G.floor,lives:0,dead:true});
+    showResultScreen();
+}
+
+function showResultScreen() {
+    showScreen('screen-result');
+    const rankIcons=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣'];
+
+    if(G.mode==='singleplayer') {
+        document.getElementById('result-rank').textContent='🔥';
+        document.getElementById('result-title').textContent=G.floor>=50?'🏆 Legenda!':G.floor>=20?'⭐ Luar Biasa!':G.floor>=10?'👍 Bagus!':'💪 Coba Lagi!';
+        document.getElementById('result-stats').innerHTML=`
+            <div class="result-stat"><div class="result-stat-val" style="color:var(--gold)">${G.score}</div><div class="result-stat-lbl">Total Skor</div></div>
+            <div class="result-stat"><div class="result-stat-val" style="color:var(--teal)">${G.floor}</div><div class="result-stat-lbl">Lantai Tertinggi</div></div>
+            <div class="result-stat"><div class="result-stat-val" style="color:var(--fire2)">${G.totalJumpsUsed}</div><div class="result-stat-lbl">Total Lompatan</div></div>
+        `;
+        document.getElementById('result-mp').innerHTML='';
+        document.getElementById('btn-result-replay').onclick=startSingleplayer;
+    } else {
+        const sorted=[...G.mpPlayers].sort((a,b)=>b.score-a.score);
+        const myRank=sorted.findIndex(p=>p.id===roomData.myId)+1;
+        document.getElementById('result-rank').textContent=rankIcons[myRank-1]||'#'+myRank;
+        document.getElementById('result-title').textContent=myRank===1?'🏆 Kamu Menang!':myRank===2?'🥈 Posisi ke-2!':'Usaha bagus!';
+        document.getElementById('result-stats').innerHTML=`
+            <div class="result-stat"><div class="result-stat-val" style="color:var(--gold)">${G.score}</div><div class="result-stat-lbl">Skor Kamu</div></div>
+            <div class="result-stat"><div class="result-stat-val" style="color:var(--teal)">${G.floor}</div><div class="result-stat-lbl">Lantai</div></div>
+            <div class="result-stat"><div class="result-stat-val" style="color:var(--purple)">${myRank}</div><div class="result-stat-lbl">Peringkat</div></div>
+        `;
+        document.getElementById('result-mp').innerHTML=sorted.map((p,i)=>`
+            <div class="result-mp-row ${i===0?'winner':''}">
+                <div class="result-rank-num">${rankIcons[i]||('#'+(i+1))}</div>
+                <div><div class="result-player-name">${p.name}${p.id===roomData.myId?' 👤':''}</div><div class="result-player-floor">Lantai ${p.floor||1}</div></div>
+                <div class="result-player-score">${p.score}</div>
+            </div>`).join('');
+        document.getElementById('btn-result-replay').onclick=()=>{
+            if(G.isHost){ initHostLobby(); showScreen('screen-host'); }
+            else showScreen('screen-title');
+        };
+    }
+
+    const facts=[
+        'Pancasila pertama kali diusulkan Ir. Soekarno pada 1 Juni 1945, kini diperingati sebagai Hari Lahir Pancasila.',
+        'Burung Garuda memiliki 17 bulu di setiap sayap, 8 bulu ekor — melambangkan tanggal kemerdekaan 17-8-1945.',
+        'Bhinneka Tunggal Ika berasal dari kitab Sutasoma karangan Mpu Tantular pada abad ke-14.',
+        'BPUPKI berdiri pada 1 Maret 1945 dengan 63 anggota untuk mempersiapkan kemerdekaan Indonesia.',
+        'Pancasila ditetapkan resmi sebagai dasar negara pada 18 Agustus 1945 oleh PPKI.',
+        'Sila ke-5 mencerminkan cita-cita Indonesia sebagai negara yang mensejahterakan seluruh rakyatnya.',
+        'Garuda Pancasila memegang pita bertuliskan "Bhinneka Tunggal Ika" yang berarti berbeda-beda tetapi tetap satu.',
+    ];
+    document.getElementById('result-fact').innerHTML=`<strong>💡 Tahukah kamu?</strong><br>${facts[Math.floor(Math.random()*facts.length)]}`;
+}
+
+// ===== TEST MODE =====
+let testState = {
+    questions: [],
+    answers: [],   // null = belum, index = pilihan
+    timerInterval: null,
+    secondsLeft: 600, // 10 menit
+};
+
+function startTestMode() {
+    // Ambil 20 soal acak dari semua soal
+    const shuffled = [...QUESTIONS].sort(() => Math.random() - 0.5);
+    testState.questions = shuffled.slice(0, 20);
+    testState.answers = new Array(20).fill(null);
+    testState.secondsLeft = 600;
+
+    if(testState.timerInterval) clearInterval(testState.timerInterval);
+    testState.timerInterval = setInterval(tickTestTimer, 1000);
+
+    showScreen('screen-test');
+    renderTestQuestions();
+    updateTestTimer();
+    updateTestProgress();
+}
+
+function exitTestMode() {
+    if(testState.timerInterval) clearInterval(testState.timerInterval);
+    showScreen('screen-title');
+}
+
+function tickTestTimer() {
+    testState.secondsLeft--;
+    updateTestTimer();
+    if(testState.secondsLeft <= 0) {
+        clearInterval(testState.timerInterval);
+        showTestResult();
+    }
+}
+
+function updateTestTimer() {
+    const el = document.getElementById('test-timer');
+    if(!el) return;
+    const m = Math.floor(testState.secondsLeft / 60);
+    const s = testState.secondsLeft % 60;
+    el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    el.className = 'test-timer' + (testState.secondsLeft <= 60 ? ' warning' : '');
+}
+
+function updateTestProgress() {
+    const answered = testState.answers.filter(a => a !== null).length;
+    document.getElementById('test-progress-txt').textContent = `${answered}/20`;
+    document.getElementById('test-progress-fill').style.width = (answered / 20 * 100) + '%';
+}
+
+function renderTestQuestions() {
+    const container = document.getElementById('test-questions-container');
+    container.innerHTML = testState.questions.map((q, qi) => {
+        const diffClass = {easy:'tag-easy', medium:'tag-medium', hard:'tag-hard'}[q.diff];
+        const diffLabel = {easy:'Mudah', medium:'Sedang', hard:'Sulit'}[q.diff];
+        const answered = testState.answers[qi] !== null;
+        const letters = ['A','B','C','D'];
+        const silaBadge = ['📚','☝️','🤝','🌳','🐃','🌾'][q.sila] || '📚';
+
+        const buttonsHtml = q.opts.map((opt, oi) => {
+            const isSelected = testState.answers[qi] === oi;
+            return `<button class="test-ans-btn${isSelected ? ' selected' : ''}"
+                onclick="selectTestAnswer(${qi}, ${oi})"
+                ${answered && !isSelected ? '' : ''}>
+                <span style="font-weight:900; color:var(--muted); margin-right:6px;">${letters[oi]}.</span>${opt}
+            </button>`;
+        }).join('');
+
+        return `<div class="test-q-card${answered ? ' answered' : ''}" id="test-q-${qi}">
+            <div class="test-q-num">Soal ${qi + 1} dari 20</div>
+            <div class="test-diff-tag ${diffClass}">${silaBadge} ${q.sila ? 'Sila ' + q.sila : 'Umum'} · ${diffLabel}</div>
+            <div class="test-q-text">${q.text}</div>
+            <div class="test-ans-grid">${buttonsHtml}</div>
+        </div>`;
+    }).join('');
+}
+
+function selectTestAnswer(qi, oi) {
+    testState.answers[qi] = oi;
+    // Re-render only this card
+    const q = testState.questions[qi];
+    const card = document.getElementById('test-q-'+qi);
+    if(!card) return;
+    const letters = ['A','B','C','D'];
+    const buttonsHtml = q.opts.map((opt, idx) => {
+        const isSelected = testState.answers[qi] === idx;
+        return `<button class="test-ans-btn${isSelected ? ' selected' : ''}"
+            onclick="selectTestAnswer(${qi}, ${idx})">
+            <span style="font-weight:900; color:var(--muted); margin-right:6px;">${letters[idx]}.</span>${opt}
+        </button>`;
+    }).join('');
+    const diffClass = {easy:'tag-easy', medium:'tag-medium', hard:'tag-hard'}[q.diff];
+    const diffLabel = {easy:'Mudah', medium:'Sedang', hard:'Sulit'}[q.diff];
+    const silaBadge = ['📚','☝️','🤝','🌳','🐃','🌾'][q.sila] || '📚';
+    card.className = 'test-q-card answered';
+    card.innerHTML = `
+        <div class="test-q-num">Soal ${qi + 1} dari 20</div>
+        <div class="test-diff-tag ${diffClass}">${silaBadge} ${q.sila ? 'Sila ' + q.sila : 'Umum'} · ${diffLabel}</div>
+        <div class="test-q-text">${q.text}</div>
+        <div class="test-ans-grid">${buttonsHtml}</div>
+    `;
+    updateTestProgress();
+}
+
+function submitTest() {
+    const unanswered = testState.answers.filter(a => a === null).length;
+    if(unanswered > 0) {
+        const ok = confirm(`Masih ada ${unanswered} soal yang belum dijawab. Yakin ingin selesai?`);
+        if(!ok) return;
+    }
+    if(testState.timerInterval) clearInterval(testState.timerInterval);
+    showTestResult();
+}
+
+function showTestResult() {
+    // Hitung skor
+    let correct = 0, wrong = 0, skipped = 0;
+    testState.questions.forEach((q, i) => {
+        if(testState.answers[i] === null) { skipped++; }
+        else if(testState.answers[i] === q.correct) { correct++; }
+        else { wrong++; }
+    });
+    const score = correct;
+    const pct = Math.round(correct / 20 * 100);
+    let grade, icon;
+    if(pct >= 90)      { grade = 'Luar Biasa! 🏆'; icon = '🥇'; }
+    else if(pct >= 75) { grade = 'Bagus Sekali! ⭐'; icon = '🥈'; }
+    else if(pct >= 60) { grade = 'Cukup Baik 👍'; icon = '📚'; }
+    else if(pct >= 40) { grade = 'Perlu Belajar Lagi 💪'; icon = '📖'; }
+    else               { grade = 'Semangat Belajar! 🔥'; icon = '📝'; }
+
+    document.getElementById('test-result-grade-icon').textContent = icon;
+    document.getElementById('test-result-grade').textContent = grade;
+    document.getElementById('test-result-score').textContent = correct;
+    document.getElementById('test-result-stats').innerHTML = `
+        <div class="test-stat"><div class="test-stat-val" style="color:var(--green)">${correct}</div><div class="test-stat-lbl">Benar</div></div>
+        <div class="test-stat"><div class="test-stat-val" style="color:var(--red)">${wrong}</div><div class="test-stat-lbl">Salah</div></div>
+        <div class="test-stat"><div class="test-stat-val" style="color:var(--muted)">${skipped}</div><div class="test-stat-lbl">Dilewati</div></div>
+    `;
+    const facts = [
+        'Pancasila pertama kali diusulkan Ir. Soekarno pada 1 Juni 1945, kini diperingati sebagai Hari Lahir Pancasila.',
+        'Burung Garuda memiliki 17 bulu di setiap sayap, 8 bulu ekor — melambangkan tanggal kemerdekaan 17-8-1945.',
+        'Bhinneka Tunggal Ika berasal dari kitab Sutasoma karangan Mpu Tantular pada abad ke-14.',
+        'Pancasila ditetapkan resmi sebagai dasar negara pada 18 Agustus 1945 oleh PPKI.',
+        'Nilai-nilai Pancasila bersumber dari kepribadian dan budaya bangsa Indonesia sendiri.',
+        'Sila ke-5 mencerminkan cita-cita Indonesia sebagai negara yang mensejahterakan seluruh rakyatnya.',
+    ];
+    document.getElementById('test-result-fact').innerHTML = `<strong>💡 Tahukah kamu?</strong><br>${facts[Math.floor(Math.random()*facts.length)]}`;
+
+    showScreen('screen-test-result');
+}
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown', e=>{
+    keys[e.code]=true;
+    if((e.code==='KeyP'||e.code==='Escape')&&G.gameRunning){ e.preventDefault(); togglePause(); }
+    if(e.code==='Space'||e.code==='ArrowUp') e.preventDefault();
+});
+document.addEventListener('keyup', e=>{ keys[e.code]=false; });
+
+function touchStart(action) {
+    if(action==='left') keys['ArrowLeft']=true;
+    if(action==='right') keys['ArrowRight']=true;
+    if(action==='jump'){ keys['Space']=true; }
+}
+function touchEnd(action) {
+    if(action==='left') keys['ArrowLeft']=false;
+    if(action==='right') keys['ArrowRight']=false;
+    if(action==='jump') keys['Space']=false;
+}
+
+// ===== TUTORIAL =====
+function showTutorial() {
+    const el=document.getElementById('tutorial-overlay');
+    el.style.display='flex'; el.classList.remove('hidden');
+}
+function closeTutorial() {
+    const el=document.getElementById('tutorial-overlay');
+    el.classList.add('hidden'); el.style.display='none';
+}
+
+// ===== TITLE ANIMATION =====
+function animateTitle() {
+    const canvas=document.getElementById('title-bg');
+    if(!canvas) return;
+    const c=canvas.getContext('2d');
+    canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+    const particles=[];
+    for(let i=0;i<60;i++){
+        particles.push({x:Math.random()*canvas.width, y:canvas.height+Math.random()*200, vx:(Math.random()-0.5)*0.8, vy:-(1+Math.random()*2), size:3+Math.random()*8, alpha:Math.random(), life:Math.random()});
+    }
+    function drawTitle(){
+        if(G.screen!=='screen-title') return;
+        c.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p=>{
+            p.x+=p.vx; p.y+=p.vy; p.life-=0.005; p.alpha=p.life;
+            if(p.y<-20||p.life<=0){ p.x=Math.random()*canvas.width; p.y=canvas.height+20; p.life=0.6+Math.random()*0.4; p.vy=-(1+Math.random()*2); }
+            const colors=['#ff4500','#ff8c00','#f9c74f','#ff6b35'];
+            c.beginPath();
+            c.arc(p.x,p.y,p.size,0,Math.PI*2);
+            c.fillStyle=colors[Math.floor(p.life*4)%4]+Math.floor(p.alpha*255).toString(16).padStart(2,'0');
+            c.fill();
+        });
+        requestAnimationFrame(drawTitle);
+    }
+    drawTitle();
+}
+
+// ===== INIT =====
+window.addEventListener('load', ()=>{
+    G.screen='screen-title';
+    keys._canJump=true;
+    animateTitle();
+    renderAvatarRow('sp-avatar-row', 0);
+    renderAvatarRow('host-avatar-row', 0);
+    renderAvatarRow('join-avatar-row', 0);
+    updateLives();
+});
+
+window.addEventListener('resize', ()=>{
+    if(G.screen==='screen-game'){ initCanvas(); }
+});
+</script>
+</body>
+</html>
