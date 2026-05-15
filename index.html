@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 Menara Kayu Berapi — Kuis Pancasila</title>
+    <title>🔥 Pancasila The Quest!</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -103,12 +103,20 @@
         #hud-bonus { margin-left: auto; font-size: 0.75rem; background: rgba(255,140,0,0.15); border: 1px solid var(--fire2); border-radius: 100px; padding: 3px 10px; color: var(--fire2); display: none; }
 
         /* ===== GAME CANVAS ===== */
-        #game-area { position: fixed; inset: 56px 320px 36px 0; overflow: hidden; }
+        #game-area { position: fixed; inset: 56px 320px 36px 0; overflow: hidden; transition: right 0.35s cubic-bezier(0.4,0,0.2,1); }
+        #game-area.panel-hidden { right: 0; }
         #game-canvas { display: block; }
 
         /* ===== QUIZ PANEL ===== */
-        #quiz-panel { position: fixed; right: 0; top: 56px; bottom: 0; width: 320px; background: rgba(5,3,1,0.95); border-left: 2px solid var(--fire); z-index: 90; display: flex; flex-direction: column; padding: 12px; gap: 8px; overflow-y: auto; backdrop-filter: blur(10px); transition: transform 0.3s; }
+        #quiz-panel { position: fixed; right: 0; top: 56px; bottom: 0; width: 320px; background: rgba(5,3,1,0.95); border-left: 2px solid var(--fire); z-index: 90; display: flex; flex-direction: column; padding: 12px; gap: 8px; overflow-y: auto; backdrop-filter: blur(10px); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+        #quiz-panel.panel-hidden { transform: translateX(100%); }
         #quiz-panel.hidden { transform: translateX(100%); }
+        /* Toggle button for quiz panel */
+        #quiz-toggle-btn { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 95; background: rgba(5,3,1,0.92); border: 2px solid var(--fire); border-right: none; border-radius: 10px 0 0 10px; padding: 10px 6px; cursor: pointer; display: none; flex-direction: column; align-items: center; gap: 3px; backdrop-filter: blur(8px); transition: background 0.2s; }
+        #quiz-toggle-btn.visible { display: flex; }
+        #quiz-toggle-btn:hover { background: rgba(255,69,0,0.15); }
+        #quiz-toggle-btn .qtb-icon { font-size: 1.1rem; }
+        #quiz-toggle-btn .qtb-label { font-family: 'Fredoka One', cursive; font-size: 0.6rem; color: var(--fire2); writing-mode: vertical-rl; text-orientation: mixed; letter-spacing: 1px; }
 
         .qp-title { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: var(--fire2); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
         .quiz-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; flex-shrink: 0; }
@@ -245,11 +253,361 @@
         .loading-text { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--muted); }
 
         /* ===== MOBILE CONTROLS ===== */
-        #mobile-controls { position: fixed; bottom: 20px; left: 0; right: 0; z-index: 150; display: none; justify-content: space-between; padding: 0 16px; pointer-events: none; }
+        #mobile-controls { position: fixed; bottom: 44px; left: 0; right: 0; z-index: 150; display: none; justify-content: space-between; padding: 0 16px; pointer-events: none; }
+        #mobile-controls.game-active { display: flex; }
         .touch-group { display: flex; gap: 8px; pointer-events: all; }
-        .touch-btn { width: 54px; height: 54px; border-radius: 50%; background: rgba(255,140,0,0.15); border: 2px solid rgba(255,140,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Fredoka One', cursive; color: var(--fire2); }
-        .touch-btn:active { background: rgba(255,140,0,0.35); }
-        @media (max-width: 768px) { #mobile-controls { display: flex; } #game-area { right: 0; } #quiz-panel { display: none; } }
+        .touch-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,140,0,0.2); border: 2px solid rgba(255,140,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Fredoka One', cursive; color: var(--fire2); box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: background 0.1s; }
+        .touch-btn:active, .touch-btn.pressed { background: rgba(255,140,0,0.45); border-color: var(--fire); transform: scale(0.93); }
+        /* ===================================================
+           RESPONSIVE DESIGN — MOBILE-FIRST
+           Breakpoints: Mobile ≤480px | Tablet ≤768px | Desktop >768px
+           =================================================== */
+
+        /* Desktop baseline: controls always visible */
+        @media (min-width: 769px) {
+            #mobile-controls.game-active { display: flex; }
+        }
+
+        /* ─── TABLET (≤768px) ─── */
+        @media (max-width: 768px) {
+
+            /* HUD — smaller, more compact */
+            #hud {
+                height: 48px;
+                padding: 0 10px;
+                gap: 8px;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+            .hud-val { font-size: 1rem; }
+            .hud-label { font-size: 0.55rem; }
+            .lh { font-size: 0.85rem; }
+            #hud-jumps-bar { width: 48px; }
+            .q-slot { width: 18px; height: 18px; font-size: 0.6rem; }
+            #hud-player-name { max-width: 60px; font-size: 0.75rem; }
+            #hud-bonus { font-size: 0.65rem; padding: 2px 7px; }
+
+            /* Game area — full width, quiz panel becomes drawer */
+            #game-area {
+                right: 0 !important;
+                bottom: 80px; /* room for mobile controls */
+                top: 48px;
+            }
+
+            /* Quiz panel — slide-in drawer from right */
+            #quiz-panel {
+                top: 48px;
+                width: min(300px, 88vw);
+                z-index: 200;
+                box-shadow: -4px 0 24px rgba(0,0,0,0.6);
+            }
+            /* When hidden, slide off to the right */
+            #quiz-panel.hidden,
+            #quiz-panel.panel-hidden { transform: translateX(100%); }
+
+            /* MP panel — drawer from left */
+            #mp-panel {
+                top: 48px;
+                width: min(180px, 80vw);
+                z-index: 200;
+                box-shadow: 4px 0 24px rgba(0,0,0,0.6);
+            }
+
+            /* Lava bar — full width on tablet */
+            #lava-distance-bar { right: 0; height: 32px; }
+
+            /* Mobile controls — show during game */
+            #mobile-controls.game-active { display: flex; }
+
+            /* Touch buttons — slightly larger tap targets */
+            .touch-btn { width: 58px; height: 58px; font-size: 1.4rem; }
+
+            /* Lobby cards */
+            .lobby-card { padding: 20px 18px; }
+            .room-code-display { font-size: 2.8rem; letter-spacing: 7px; padding: 12px; }
+
+            /* Result screen */
+            .result-box { padding: 16px 0 80px; }
+            .result-rank { font-size: 3.5rem; }
+            .result-title { font-size: 1.6rem; }
+            .result-stat-val { font-size: 1.4rem; }
+
+            /* Test mode */
+            .test-container { padding: 12px 0 80px; }
+            .test-q-text { font-size: 0.9rem; }
+        }
+
+        /* ─── MOBILE (≤480px) ─── */
+        @media (max-width: 480px) {
+
+            /* Prevent body horizontal scroll */
+            body { overflow-x: hidden; }
+
+            /* HUD — ultra-compact, hide less critical items */
+            #hud {
+                height: 44px;
+                padding: 0 8px;
+                gap: 5px;
+                flex-wrap: nowrap;
+                scrollbar-width: none;
+            }
+            #hud::-webkit-scrollbar { display: none; }
+            .hud-val { font-size: 0.9rem; }
+            .hud-label { font-size: 0.5rem; letter-spacing: 0; }
+            .hud-div { height: 20px; }
+            #hud-jumps-bar { width: 36px; height: 4px; }
+            #jump-pts-val { font-size: 1rem; }
+            .lh { font-size: 0.75rem; }
+            .q-slot { width: 15px; height: 15px; font-size: 0.55rem; border-radius: 4px; }
+
+            /* Hide player name in HUD to save space */
+            #hud-player-name { display: none; }
+            #hud-bonus { font-size: 0.6rem; padding: 2px 5px; }
+
+            /* Game area — full screen below HUD, above touch controls */
+            #game-area {
+                top: 44px;
+                right: 0 !important;
+                left: 0;
+                bottom: 90px;
+            }
+
+            /* Canvas fills game-area perfectly */
+            #game-canvas { width: 100% !important; height: 100% !important; }
+
+            /* Quiz panel — full-width bottom sheet on mobile */
+            #quiz-panel {
+                top: auto;
+                bottom: 90px;
+                right: 0;
+                left: 0;
+                width: 100%;
+                height: 55vh;
+                border-left: none;
+                border-top: 2px solid var(--fire);
+                border-radius: 16px 16px 0 0;
+                transform: translateY(100%);
+                transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+                z-index: 200;
+            }
+            #quiz-panel.hidden,
+            #quiz-panel.panel-hidden {
+                transform: translateY(100%);
+            }
+            /* When quiz panel is visible (no hidden class), slide up */
+            #quiz-panel:not(.hidden):not(.panel-hidden) {
+                transform: translateY(0%);
+            }
+
+            /* Quiz toggle button — reposition for bottom sheet */
+            #quiz-toggle-btn {
+                right: 12px;
+                top: auto;
+                bottom: 100px;
+                transform: none;
+                border-radius: 12px;
+                border: 2px solid var(--fire);
+                padding: 8px 10px;
+                flex-direction: row;
+                gap: 5px;
+            }
+            #quiz-toggle-btn .qtb-label {
+                writing-mode: horizontal-tb;
+                font-size: 0.65rem;
+                letter-spacing: 0.5px;
+            }
+
+            /* MP panel — compact top drawer on mobile */
+            #mp-panel {
+                top: 44px;
+                left: 0;
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                z-index: 200;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 8px;
+            }
+            #mp-panel.hidden { transform: translateY(-100%); }
+            .mp-title { width: 100%; margin-bottom: 4px; font-size: 0.75rem; }
+            .mp-player { padding: 5px 8px; font-size: 0.72rem; min-width: 100px; flex: 1; }
+            .mp-player-name { font-size: 0.7rem; }
+            .mp-player-score { font-size: 0.75rem; }
+
+            /* Lava distance bar — full width, above touch controls */
+            #lava-distance-bar {
+                right: 0;
+                bottom: 90px;
+                height: 28px;
+                padding: 0 10px;
+                gap: 6px;
+            }
+            #lava-dist-label { font-size: 0.6rem; }
+            #lava-dist-meters { font-size: 0.85rem; min-width: 48px; }
+
+            /* Mobile controls — larger, better spaced */
+            #mobile-controls {
+                bottom: 0;
+                padding: 8px 12px 12px;
+                background: rgba(5,3,1,0.85);
+                border-top: 1px solid var(--border);
+                backdrop-filter: blur(6px);
+                height: 90px;
+                align-items: center;
+            }
+            #mobile-controls.game-active { display: flex; }
+            .touch-btn {
+                width: 64px;
+                height: 64px;
+                font-size: 1.5rem;
+                border-radius: 50%;
+            }
+            .touch-group { gap: 10px; }
+
+            /* Title screen */
+            .title-logo { font-size: clamp(1.6rem, 7vw, 3rem); }
+            .fire-icon { font-size: 2.2rem; }
+
+            /* Title buttons — stack vertically and full width */
+            #screen-title > div > div[style*="display:flex"][style*="gap:12px"] {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0 20px;
+                gap: 10px !important;
+            }
+            #screen-title > div > div[style*="margin-top:12px"] {
+                padding: 0 20px;
+            }
+            #screen-title .btn {
+                width: 100%;
+                padding: 13px;
+                font-size: 1rem;
+            }
+
+            /* Feature icons row — 2 columns on mobile */
+            #screen-title > div > div[style*="gap:24px"] {
+                gap: 14px !important;
+                padding: 0 12px;
+            }
+            #screen-title > div > div[style*="gap:24px"] > div {
+                font-size: 0.75rem;
+            }
+
+            /* Lobby card */
+            .lobby-card {
+                padding: 16px 14px;
+                border-radius: 16px;
+                width: 95%;
+            }
+            .lobby-title { font-size: 1.5rem; }
+            .room-code-display {
+                font-size: 2.2rem;
+                letter-spacing: 5px;
+                padding: 10px;
+                border-radius: 12px;
+            }
+            .diff-row { gap: 6px; }
+            .diff-btn { font-size: 0.72rem; padding: 8px 5px; }
+            .avatar-mini { width: 52px; height: 70px; }
+
+            /* Result box — scrollable, safe padding at bottom */
+            .result-box {
+                width: 95%;
+                padding: 12px 0 100px;
+                text-align: center;
+            }
+            .result-rank { font-size: 3rem; }
+            .result-title { font-size: 1.4rem; }
+            .result-stats { grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0; }
+            .result-stat { padding: 10px 6px; border-radius: 10px; }
+            .result-stat-val { font-size: 1.2rem; }
+            .result-stat-lbl { font-size: 0.6rem; }
+            .result-mp-row { padding: 8px 10px; }
+            .result-rank-num { font-size: 1.1rem; width: 24px; }
+            .result-player-score { font-size: 1rem; }
+            .result-fact { font-size: 0.8rem; padding: 10px 12px; }
+
+            /* Action buttons in result — stack */
+            #screen-result .result-box > div[style*="display:flex"] {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #screen-result .btn { width: 100%; }
+
+            /* Test mode */
+            .test-container { width: 95%; padding: 8px 0 100px; }
+            .test-header { padding: 12px 14px; gap: 10px; }
+            .test-q-card { padding: 14px; }
+            .test-q-text { font-size: 0.88rem; line-height: 1.45; }
+            .test-ans-grid { grid-template-columns: 1fr; gap: 6px; }
+            .test-ans-btn { font-size: 0.85rem; padding: 10px 12px; }
+            .test-timer { font-size: 1.3rem; min-width: 50px; }
+            .test-score-circle { width: 110px; height: 110px; border-width: 4px; }
+            .test-score-val { font-size: 2.2rem; }
+            .test-grade { font-size: 1.6rem; }
+            .test-stat-row { gap: 6px; }
+            .test-stat { padding: 10px 6px; }
+            .test-stat-val { font-size: 1.2rem; }
+            .test-result-box { width: 95%; padding: 16px 0 100px; }
+
+            /* Quiz panel cards */
+            .quiz-card { padding: 10px; border-radius: 10px; }
+            .quiz-q-text { font-size: 0.78rem; }
+            .ans-btn { font-size: 0.72rem; padding: 7px 6px; }
+            .answer-grid-small { gap: 5px; }
+
+            /* Countdown number — smaller on phone */
+            #countdown-num { font-size: 6rem; }
+
+            /* Pause menu */
+            .pause-title { font-size: 2.2rem; }
+            #pause-menu { gap: 10px; padding: 20px; }
+            #pause-menu .btn { width: 100%; max-width: 280px; }
+
+            /* Notifs stay within viewport */
+            #notif-wrap {
+                top: 52px;
+                max-width: 90vw;
+            }
+            .notif { font-size: 0.82rem; padding: 5px 14px; }
+
+            /* Scrollable screens safe area */
+            #screen-sp-setup,
+            #screen-test,
+            #screen-result,
+            #screen-test-result { padding-bottom: 20px; }
+
+            /* Tutorial modal */
+            #tutorial-overlay > div {
+                padding: 18px;
+                border-radius: 16px;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+            #tutorial-overlay > div > div[style*="font-size:1.8rem"] {
+                font-size: 1.3rem !important;
+            }
+            #tutorial-overlay > div > div > div { font-size: 0.8rem; }
+
+            /* Copy toast */
+            #copy-toast { bottom: 100px; }
+
+            /* Float points */
+            .float-pts { font-size: 1.2rem; }
+        }
+
+        /* ─── Very small phones (≤360px) ─── */
+        @media (max-width: 360px) {
+            .touch-btn { width: 56px; height: 56px; font-size: 1.3rem; }
+            .diff-btn { font-size: 0.66rem; padding: 7px 3px; }
+            .result-stats { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+            .lobby-card { padding: 12px 10px; }
+        }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--dark); }
@@ -272,7 +630,7 @@
     <canvas id="title-bg" style="position:absolute;inset:0;pointer-events:none;"></canvas>
     <div style="text-align:center; position:relative; z-index:1;">
         <div class="fire-icon">🔥</div>
-        <h1 class="title-logo">Menara Kayu Berapi</h1>
+        <h1 class="title-logo">Pancasila The Quest!</h1>
         <p style="font-family:'Fredoka One',cursive; font-size:1.3rem; color:var(--fire2); position:relative; z-index:1; margin-top:-4px; margin-bottom:8px;">Kuis Pancasila · Platformer Survival</p>
         <p style="color:var(--muted); font-size:0.9rem; margin-bottom:24px;">Panjat menara, jawab soal, jangan sampai terlahap api! 🔥</p>
         <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:24px;">
@@ -455,9 +813,18 @@
 </div>
 <div id="dead-overlay" class="hidden"><div class="dead-text">💀 KENA API!</div></div>
 
+<!-- QUIZ PANEL TOGGLE BUTTON (floating, shown when panel is hidden) -->
+<div id="quiz-toggle-btn" onclick="toggleQuizPanel()">
+    <span class="qtb-icon">📚</span>
+    <span class="qtb-label">SOAL</span>
+</div>
+
 <!-- QUIZ PANEL -->
 <div id="quiz-panel" class="hidden">
-    <div class="qp-title">📚 Soal Aktif <span id="qp-count">(0/3)</span></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+        <div class="qp-title">📚 Soal Aktif <span id="qp-count">(0/3)</span></div>
+        <button onclick="toggleQuizPanel()" title="Sembunyikan panel soal" style="background:rgba(255,69,0,0.15); border:1px solid var(--fire); border-radius:8px; color:var(--fire2); font-size:0.8rem; padding:3px 8px; cursor:pointer; font-family:'Fredoka One',cursive;">✕ Tutup</button>
+    </div>
     <div style="font-size:0.72rem; color:var(--muted); margin-bottom:6px;">Jawab soal = dapat poin lompatan!</div>
     <div id="quiz-slots-container"></div>
 </div>
@@ -509,11 +876,17 @@
 <!-- MOBILE CONTROLS -->
 <div id="mobile-controls">
     <div class="touch-group">
-        <div class="touch-btn" ontouchstart="touchStart('left')" ontouchend="touchEnd('left')">◀</div>
-        <div class="touch-btn" ontouchstart="touchStart('right')" ontouchend="touchEnd('right')">▶</div>
+        <div class="touch-btn" id="btn-left"
+            ontouchstart="touchStart('left')" ontouchend="touchEnd('left')" ontouchcancel="touchEnd('left')"
+            onmousedown="touchStart('left')" onmouseup="touchEnd('left')" onmouseleave="touchEnd('left')">◀</div>
+        <div class="touch-btn" id="btn-right"
+            ontouchstart="touchStart('right')" ontouchend="touchEnd('right')" ontouchcancel="touchEnd('right')"
+            onmousedown="touchStart('right')" onmouseup="touchEnd('right')" onmouseleave="touchEnd('right')">▶</div>
     </div>
     <div class="touch-group">
-        <div class="touch-btn" ontouchstart="touchStart('jump')" ontouchend="touchEnd('jump')">↑</div>
+        <div class="touch-btn" id="btn-jump"
+            ontouchstart="touchStart('jump')" ontouchend="touchEnd('jump')" ontouchcancel="touchEnd('jump')"
+            onmousedown="touchStart('jump')" onmouseup="touchEnd('jump')" onmouseleave="touchEnd('jump')">↑</div>
     </div>
 </div>
 
@@ -563,7 +936,7 @@
 
 <script>
 // ============================================================
-// MENARA KAYU BERAPI — FIXED VERSION
+// PANCASILA THE QUEST! — FIXED VERSION
 // Perbaikan 1: Platform sistem auto-generated proper
 // Perbaikan 2: Jump points system (5 awal, -1 per lompat)
 // Perbaikan 3: Poin soal: easy=1, medium=2, hard=3
@@ -648,6 +1021,43 @@ const QUESTIONS = [
     { id:'N4-04', sila:4, text:'Sidang BPUPKI pertama membahas dasar negara, sedangkan sidang kedua membahas...', opts:['Sistem ekonomi','Rancangan UUD dan wilayah negara','Sistem militer','Hubungan luar negeri'], correct:1, diff:'hard' },
     { id:'N0-13', sila:0, text:'Tokoh yang pertama kali mengusulkan nama "Pancasila" untuk dasar negara adalah...', opts:['Moh. Yamin','Soepomo','Ir. Soekarno','Moh. Hatta'], correct:2, diff:'hard' },
     { id:'N5-04', sila:5, text:'Pasal UUD 1945 yang menyatakan bahwa "Fakir miskin dan anak-anak terlantar dipelihara oleh negara" adalah pasal...', opts:['27 ayat 2','31 ayat 1','34 ayat 1','33 ayat 3'], correct:2, diff:'hard' },
+
+    // ===== 30 SOAL BARU =====
+    // 10 MUDAH BARU
+    { id:'X0-01', sila:0, text:'Pancasila adalah dasar negara Republik Indonesia. "Panca" berarti...', opts:['Tiga','Empat','Lima','Enam'], correct:2, diff:'easy' },
+    { id:'X0-02', sila:0, text:'Burung apakah yang menjadi lambang negara Indonesia?', opts:['Elang Jawa','Merpati','Garuda','Cendrawasih'], correct:2, diff:'easy' },
+    { id:'X1-01', sila:1, text:'Manakah yang BUKAN termasuk agama yang diakui di Indonesia?', opts:['Islam','Kristen','Hindu','Atheis'], correct:3, diff:'easy' },
+    { id:'X2-01', sila:2, text:'Sikap menolong korban bencana alam mencerminkan sila ke...', opts:['1','2','3','4'], correct:1, diff:'easy' },
+    { id:'X3-01', sila:3, text:'Menjaga persatuan bangsa adalah kewajiban...', opts:['Presiden saja','Tentara saja','Seluruh warga negara','Pelajar saja'], correct:2, diff:'easy' },
+    { id:'X4-01', sila:4, text:'Contoh musyawarah di lingkungan keluarga adalah...', opts:['Ayah memutuskan sendiri','Hanya ibu yang berpendapat','Semua anggota keluarga berunding bersama','Anak-anak tidak boleh berpendapat'], correct:2, diff:'easy' },
+    { id:'X5-01', sila:5, text:'Sikap adil artinya...', opts:['Selalu menguntungkan diri sendiri','Memberikan hak sesuai porsinya kepada semua','Memihak yang kuat','Tidak peduli orang lain'], correct:1, diff:'easy' },
+    { id:'X0-03', sila:0, text:'Tanggal 17 Agustus diperingati sebagai...', opts:['Hari Pancasila','Hari Kemerdekaan Indonesia','Hari Pahlawan','Hari Sumpah Pemuda'], correct:1, diff:'easy' },
+    { id:'X3-02', sila:3, text:'Gotong royong membersihkan lingkungan RT adalah contoh nilai...', opts:['Ketuhanan','Kemanusiaan','Persatuan','Keadilan'], correct:2, diff:'easy' },
+    { id:'X5-02', sila:5, text:'Pemerataan pembangunan ke seluruh pelosok negeri mencerminkan sila ke...', opts:['2','3','4','5'], correct:3, diff:'easy' },
+
+    // 10 SEDANG BARU
+    { id:'X0-04', sila:0, text:'Nilai "Sila" dalam Pancasila berasal dari bahasa...', opts:['Jawa','Sansekerta','Arab','Melayu'], correct:1, diff:'medium' },
+    { id:'X1-02', sila:1, text:'Frasa "Ketuhanan dengan kewajiban menjalankan syariat Islam bagi pemeluk-pemeluknya" terdapat dalam...', opts:['Pembukaan UUD 1945','Piagam Jakarta','Batang Tubuh UUD 1945','Dekrit Presiden'], correct:1, diff:'medium' },
+    { id:'X2-02', sila:2, text:'Komnas HAM (Komisi Nasional Hak Asasi Manusia) dibentuk berdasarkan nilai sila ke...', opts:['1','2','3','4'], correct:1, diff:'medium' },
+    { id:'X3-03', sila:3, text:'Bela negara merupakan kewajiban warga negara yang berlandaskan sila ke...', opts:['2','3','4','5'], correct:1, diff:'medium' },
+    { id:'X4-02', sila:4, text:'Sistem perwakilan rakyat di DPR mencerminkan sila ke-4 karena...', opts:['Rakyat memilih wakil untuk menyampaikan aspirasi','Hanya golongan tertentu yang mewakili','Keputusan dibuat satu orang','Tidak perlu suara rakyat'], correct:0, diff:'medium' },
+    { id:'X5-03', sila:5, text:'Program BPJS Kesehatan yang memberikan layanan kesehatan murah untuk rakyat mencerminkan sila ke...', opts:['2','3','4','5'], correct:3, diff:'medium' },
+    { id:'X0-05', sila:0, text:'Lambang negara Indonesia ditetapkan dalam UU No. 24 Tahun...', opts:['1945','2000','2009','2010'], correct:2, diff:'medium' },
+    { id:'X1-03', sila:1, text:'Kalimat "Tuhan" dalam sila pertama menunjukkan bahwa Indonesia adalah negara...', opts:['Teokrasi','Sekuler','Berketuhanan','Monarki'], correct:2, diff:'medium' },
+    { id:'X2-03', sila:2, text:'Pengakuan persamaan derajat antar manusia tanpa membeda-bedakan suku adalah penerapan sila...', opts:['1','2','3','5'], correct:1, diff:'medium' },
+    { id:'X4-03', sila:4, text:'Dalam demokrasi Pancasila, pengambilan keputusan diutamakan melalui...', opts:['Voting langsung','Musyawarah untuk mufakat','Keputusan presiden','Suara terbanyak mutlak'], correct:1, diff:'medium' },
+
+    // 10 SULIT BARU
+    { id:'X0-06', sila:0, text:'Mpu Tantular hidup pada masa kerajaan...', opts:['Sriwijaya','Mataram Kuno','Majapahit','Demak'], correct:2, diff:'hard' },
+    { id:'X0-07', sila:0, text:'Pancasila pernah mengalami percobaan penggantian dengan ideologi lain pada peristiwa G30S/PKI yang terjadi pada tahun...', opts:['1948','1955','1965','1966'], correct:2, diff:'hard' },
+    { id:'X1-04', sila:1, text:'Pasal UUD 1945 yang menyatakan "Negara menjamin kemerdekaan tiap-tiap penduduk untuk memeluk agamanya" adalah...', opts:['Pasal 28A','Pasal 29 ayat 1','Pasal 29 ayat 2','Pasal 31 ayat 1'], correct:2, diff:'hard' },
+    { id:'X2-04', sila:2, text:'Deklarasi Bangkok 1967 yang melahirkan ASEAN mencerminkan nilai sila ke-2 karena...', opts:['Memperkuat militer','Menghormati kedaulatan dan hak bangsa lain','Meningkatkan perdagangan','Menyebarkan budaya Indonesia'], correct:1, diff:'hard' },
+    { id:'X3-04', sila:3, text:'Bhinneka Tunggal Ika dalam Kitab Sutasoma mengacu pada ajaran yang menyatukan aliran...', opts:['Hindu dan Buddha','Islam dan Kristen','Nasionalisme dan Agama','Adat dan Hukum'], correct:0, diff:'hard' },
+    { id:'X4-04', sila:4, text:'UUD 1945 pasal 1 ayat 2 menyatakan bahwa kedaulatan berada di tangan rakyat dan dilaksanakan menurut...', opts:['Keinginan presiden','Undang-Undang Dasar','Suara mayoritas mutlak','Keputusan MPR'], correct:1, diff:'hard' },
+    { id:'X5-04', sila:5, text:'Pasal yang menyatakan bahwa bumi, air, dan kekayaan alam dikuasai negara untuk kemakmuran rakyat adalah UUD 1945 pasal...', opts:['27 ayat 2','31 ayat 1','33 ayat 3','34 ayat 1'], correct:2, diff:'hard' },
+    { id:'X0-08', sila:0, text:'Rumusan dasar negara yang diajukan oleh Moh. Yamin dalam sidang BPUPKI 29 Mei 1945 ada berapa butir?', opts:['3','4','5','6'], correct:2, diff:'hard' },
+    { id:'X0-09', sila:0, text:'Hari Kesaktian Pancasila dikaitkan dengan kegagalan pemberontakan G30S. Peristiwa ini terjadi tepatnya pada...', opts:['30 September 1965','1 Oktober 1965','30 Oktober 1965','1 Juni 1965'], correct:1, diff:'hard' },
+    { id:'X2-05', sila:2, text:'Undang-Undang yang mengatur tentang HAM di Indonesia adalah UU No...', opts:['26 Tahun 1999','39 Tahun 1999','40 Tahun 1999','23 Tahun 2002'], correct:1, diff:'hard' },
 ];
 
 // ===== AVATARS =====
@@ -988,6 +1398,10 @@ function initGame() {
     generateTower();
 
     document.getElementById('quiz-panel').classList.remove('hidden');
+    document.getElementById('quiz-panel').classList.remove('panel-hidden');
+    document.getElementById('quiz-toggle-btn').classList.add('visible');
+    document.getElementById('game-area').classList.remove('panel-hidden');
+    document.getElementById('mobile-controls').classList.add('game-active');
     if(G.mode==='multiplayer') document.getElementById('mp-panel').classList.remove('hidden');
     else document.getElementById('mp-panel').classList.add('hidden');
 
@@ -1016,7 +1430,7 @@ function createFloor(index) {
     // Lubang: semakin tinggi = lebih banyak dan lebih lebar
     const progress = Math.min(index / 60, 1); // 0-1 berdasarkan ketinggian
     const holeCount = 1 + Math.floor(progress * 3); // 1-4 lubang
-    const holeWidthBase = 30 + Math.floor(progress * 55); // 30-85px
+    const holeWidthBase = 30 + Math.floor(progress * 50); // 30-80px (diperkecil max untuk pastikan masih bisa dipijak)
 
     // Lantai 0, 1, 2 tidak ada lubang (hindari bug awal permainan)
     const holes = index < 3 ? [] : generateHoles(W, holeCount, holeWidthBase);
@@ -1052,11 +1466,14 @@ function generateHoles(w, count, holeW) {
     const holes = [];
     const margin = 50;
     const usable = w - margin * 2;
+    // Pastikan total lubang tidak memakan lebih dari 65% lebar berguna
+    const maxTotalHoleW = usable * 0.65;
+    const adjustedHoleW = Math.min(holeW, Math.floor(maxTotalHoleW / count));
     const segment = usable / count;
     for(let i=0; i<count; i++) {
-        const maxOffset = Math.max(0, segment - holeW - 10);
+        const maxOffset = Math.max(0, segment - adjustedHoleW - 16);
         const x = margin + i * segment + (maxOffset > 0 ? Math.random() * maxOffset : 0);
-        holes.push({ x: Math.max(margin, Math.min(w - margin - holeW, x)), w: holeW });
+        holes.push({ x: Math.max(margin, Math.min(w - margin - adjustedHoleW, x)), w: adjustedHoleW });
     }
     return holes;
 }
@@ -1278,8 +1695,12 @@ function update() {
         const flTop = fl.y;
 
         // Landing detection (skip during jetpack)
-        if(!G.jetpackActive && player.vy >= 0 && pBottom > flTop && pBottom < flTop + FLOOR_THICKNESS + 14) {
-            const inHole = !G.coverHoles && fl.holes.some(h => pRight > h.x+5 && pLeft < h.x+h.w-5);
+        if(!G.jetpackActive && player.vy >= 0 && pBottom > flTop && pBottom < flTop + FLOOR_THICKNESS + 18) {
+            // Improved hole detection: player must be mostly over a solid segment, not just touching edge
+            const playerCenterX = player.x + player.w / 2;
+            const playerFeet = player.x + 4; // shrink hitbox slightly for more forgiving landing
+            const playerFeetRight = player.x + player.w - 4;
+            const inHole = !G.coverHoles && fl.holes.some(h => playerFeetRight > h.x + 6 && playerFeet < h.x + h.w - 6);
             if(!inHole) {
                 player.y = flTop - player.h;
                 player.vy = 0;
@@ -1894,6 +2315,19 @@ function renderMPPanel() {
     }).join('');
 }
 
+// ===== QUIZ PANEL TOGGLE =====
+function toggleQuizPanel() {
+    const panel = document.getElementById('quiz-panel');
+    const btn = document.getElementById('quiz-toggle-btn');
+    const area = document.getElementById('game-area');
+    const isHidden = panel.classList.contains('panel-hidden');
+    panel.classList.toggle('panel-hidden', !isHidden);
+    btn.classList.toggle('visible', !isHidden);
+    area.classList.toggle('panel-hidden', !isHidden);
+    // Reinit canvas size after transition
+    setTimeout(() => { if(G.gameRunning) initCanvas(); }, 380);
+}
+
 // ===== PAUSE =====
 function togglePause() {
     G.paused=!G.paused;
@@ -1908,6 +2342,8 @@ function endGame(fromQuit=false) {
     document.getElementById('pause-menu').classList.add('hidden');
     document.getElementById('lava-warning').classList.remove('active');
     document.getElementById('dead-overlay').classList.add('hidden');
+    document.getElementById('mobile-controls').classList.remove('game-active');
+    document.getElementById('quiz-toggle-btn').classList.remove('visible');
     if(G.mode==='multiplayer') bcSend({type:'player_update',code:roomData.code,playerId:roomData.myId,score:G.score,floor:G.floor,lives:0,dead:true});
     showResultScreen();
 }
@@ -2124,14 +2560,14 @@ document.addEventListener('keydown', e=>{
 document.addEventListener('keyup', e=>{ keys[e.code]=false; });
 
 function touchStart(action) {
-    if(action==='left') keys['ArrowLeft']=true;
-    if(action==='right') keys['ArrowRight']=true;
-    if(action==='jump'){ keys['Space']=true; }
+    if(action==='left'){ keys['ArrowLeft']=true; document.getElementById('btn-left').classList.add('pressed'); }
+    if(action==='right'){ keys['ArrowRight']=true; document.getElementById('btn-right').classList.add('pressed'); }
+    if(action==='jump'){ keys['Space']=true; document.getElementById('btn-jump').classList.add('pressed'); }
 }
 function touchEnd(action) {
-    if(action==='left') keys['ArrowLeft']=false;
-    if(action==='right') keys['ArrowRight']=false;
-    if(action==='jump') keys['Space']=false;
+    if(action==='left'){ keys['ArrowLeft']=false; document.getElementById('btn-left').classList.remove('pressed'); }
+    if(action==='right'){ keys['ArrowRight']=false; document.getElementById('btn-right').classList.remove('pressed'); }
+    if(action==='jump'){ keys['Space']=false; document.getElementById('btn-jump').classList.remove('pressed'); }
 }
 
 // ===== TUTORIAL =====
